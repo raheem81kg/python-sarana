@@ -1,10 +1,10 @@
 func f():
   let a = 5
   func boo():
-    print("hi!")
-    print(a)
+    display("hi!")
+    display(a)
   end
-  print("run inner")
+  display("run inner")
   boo()
 end
 

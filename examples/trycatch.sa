@@ -5,7 +5,7 @@ let C = A + B * B
 try
   let D = C / 0
 catch
-  print("Error: Division by zero attempted but not allowed.")
-  print("The result is ")
-  print(C)
+  display("Error: Division by zero attempted but not allowed.")
+  display("The result is ")
+  display(C)
 end

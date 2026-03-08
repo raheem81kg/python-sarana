@@ -74,6 +74,10 @@ def p_statement_func_noargs(p):
     "statement : FUNCTION IDENTIFIER LPAREN RPAREN COLON NEWLINE block END"
     p[0] = FunctionDeclaration(p[2], Null(), p[7])
 
+def p_expression_display(p):
+    "expression : DISPLAY LPAREN expression RPAREN"
+    p[0] = Display(p[3])
+
 def p_const_float(p):
     "const : FLOAT"
     p[0] = Float(float(p[1]))

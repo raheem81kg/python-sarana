@@ -18,7 +18,7 @@ The code uses standard Python and PLY for lexing/parsing.
 
 ## Status
 
-Basic arithmetic, floats, integers, booleans, and strings, variable assignment, if expressions, and a print() function.
+Basic arithmetic, floats, integers, booleans, and strings, variable assignment, if expressions, and a display() function.
 
 ```
 >>> 5 == 5
@@ -27,9 +27,9 @@ Basic arithmetic, floats, integers, booleans, and strings, variable assignment, 
 = false
 >>> let a = 5
 = 5
->>> print(a)
+>>> display(a)
 5
->>> print(a + 25)
+>>> display(a + 25)
 30
 >>> "hi" + 'hi'
 = hihi
@@ -37,16 +37,16 @@ Basic arithmetic, floats, integers, booleans, and strings, variable assignment, 
 = hihihihih
 
 # if expressions
->>> if false: print("no") else: print("yes") end
+>>> if false: display("no") else: display("yes") end
 yes
 >>> let a = (if true: 1 else: 5 end)
 = 1
 
 let a = 50
 if a == 50 and true:
-  print("doing stuff")
+  display("doing stuff")
 else:
-  print("not this though")
+  display("not this though")
 end
 
 >>> 5 >= 6
@@ -73,7 +73,7 @@ end
 # immutability means loops become recursion
 func p_message(msg, n):
   if n > 0:
-    print(msg)
+    display(msg)
     p_message(msg, n - 1)
   end
 end

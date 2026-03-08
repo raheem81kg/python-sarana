@@ -1,4 +1,4 @@
-print("load")
+display("load")
 
 func make_adder(amount):
   func adder(i):
@@ -7,6 +7,6 @@ func make_adder(amount):
   end
 end
 
-print("begin")
+display("begin")
 let ad = make_adder(5)
 ad(1) # doesn't

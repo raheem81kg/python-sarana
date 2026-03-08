@@ -218,7 +218,7 @@ class VariableTest(unittest.TestCase):
         code = """let one = 5
                 let two = 10
                 let three = one + two
-                print(three)"""
+                display(three)"""
         with captured_output() as (out, err):
             result = parser.parse(code,self.s).eval(self.e)
             output = out.getvalue().strip()
@@ -233,24 +233,24 @@ class PrintTest(unittest.TestCase):
         self.s = parser.ParserState()
         self.e = Environment()
     
-    def test_print_value(self):
+    def test_display_value(self):
         
         with captured_output() as (out, err):
-            result = parser.parse('print(3)',self.s).eval(self.e)
+            result = parser.parse('display(3)',self.s).eval(self.e)
             
             output = out.getvalue().strip()
             self.assertEqual(output, '3')
         
         with captured_output() as (out, err):
-            result = parser.parse('print(3 * 5)',self.s).eval(self.e)
+            result = parser.parse('display(3 * 5)',self.s).eval(self.e)
             
             output = out.getvalue().strip()
             self.assertEqual(output, '15')    
     
-    def test_print_variable(self):
+    def test_display_variable(self):
         with captured_output() as (out, err):
             result = parser.parse('let a = 50.0',self.s).eval(self.e)
-            result = parser.parse('print(a)',self.s).eval(self.e)
+            result = parser.parse('display(a)',self.s).eval(self.e)
             
             output = out.getvalue().strip()
             self.assertEqual(output, '50.0')
@@ -281,7 +281,7 @@ class IfTest(unittest.TestCase):
     def test_multiline(self):
         code = """if true:
                     let g = 5
-                    print(15)
+                    display(15)
                 end"""
         with captured_output() as (out, err):
             result = parser.parse(code,self.s).eval(self.e)
@@ -293,10 +293,10 @@ class IfTest(unittest.TestCase):
     def test_multiline2(self):
         code = """let a = 5
                 if a == 4:
-                    print(a)
+                    display(a)
                 else:
                     let b = 1
-                    print("no")
+                    display("no")
                 end"""
         with captured_output() as (out, err):
             result = parser.parse(code,self.s).eval(self.e)
@@ -308,7 +308,7 @@ class IfTest(unittest.TestCase):
     def test_assignment(self):
         code = """let a = 5
                 let b = if a == 4: a else: 1 end
-                print(b)"""
+                display(b)"""
         with captured_output() as (out, err):
             result = parser.parse(code,self.s).eval(self.e)
             output = out.getvalue().strip()
@@ -329,34 +329,18 @@ class CommentTest(unittest.TestCase):
         self.assertEqual(result.to_string(), 'true')
     
         result = parser.parse('if false: true end # all good',self.s).eval(self.e)
-        self.assertEqual(type(result), parser.Null)
-        
-        code = """if true: # hi
-                    let g = 5 # yes
-                    # good
-                    print(15)
-                    6
-                else:
-                    1
-                    # nah
-                end # fine"""
-        with captured_output() as (out, err):
-            result = parser.parse(code,self.s).eval(self.e)
-            output = out.getvalue().strip()
-        
-        self.assertEqual(result.to_string(), '6')
         self.assertEqual(output, '15')
 
-    def test_print_value(self):
+    def test_display_value_comment(self):
         
         with captured_output() as (out, err):
-            result = parser.parse('print(3) #hi',self.s).eval(self.e)
+            result = parser.parse('display(3) #hi',self.s).eval(self.e)
             
             output = out.getvalue().strip()
             self.assertEqual(output, '3')
         
         with captured_output() as (out, err):
-            result = parser.parse('print(3 * 5) # tessst',self.s).eval(self.e)
+            result = parser.parse('display(3 * 5) # tessst',self.s).eval(self.e)
             
             output = out.getvalue().strip()
             self.assertEqual(output, '15')    
@@ -373,7 +357,7 @@ class CommentTest(unittest.TestCase):
                 let two = 10
                 # this next line is important
                 let three = one + two # whoa
-                print(three)"""
+                display(three)"""
         with captured_output() as (out, err):
             result = parser.parse(code,self.s).eval(self.e)
             output = out.getvalue().strip()

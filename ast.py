@@ -347,19 +347,19 @@ class Variable(BaseBox):
         return 'Variable(%s)' % self.name
         
 
-class Print(BaseBox):
+class Display(BaseBox):
     def __init__(self, value):
         self.value = value
     
     def eval(self, env):
         print(self.value.eval(env).to_string())
-        return Null() #self.value.eval(env) 
+        return Null()
     
     def to_string(self):
-        return "Print"
+        return "Display"
 
     def rep(self):
-        return "Print(%s)" % self.value.rep()
+        return "Display(%s)" % self.value.rep()
 
 
 class If(BaseBox):

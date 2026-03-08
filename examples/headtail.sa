@@ -8,9 +8,9 @@ func tail(arr):
 end
 
 let a = [0,1,2,3]
-print(head(a))
-print(tail(a))
-print(tail(tail(a)))
-print("done")
+display(head(a))
+display(tail(a))
+display(tail(tail(a)))
+display("done")
 
 

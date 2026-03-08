@@ -8,9 +8,9 @@ class Interpreter(object):
         self.import_prelude()
     
     def import_prelude(self):
-        index = self.context.register_variable("print")
-        self.context.variables[index] = objects.Variable("print",objects.ExternalFunction("print",prelude.print_fn,1))
-        
+        index = self.context.register_variable("display")
+        self.context.variables[index] = objects.Variable("display",objects.ExternalFunction("display",prelude.display_fn,1))
+
         index = self.context.register_variable("readline")
         self.context.variables[index] = objects.Variable("readline",objects.ExternalFunction("readline",prelude.readline,1))
         
@@ -113,7 +113,7 @@ class Interpreter(object):
                         values[stack.pop()] = stack.pop()
                     stack.append(objects.Dict(values))
 
-                elif opcode == bytecode.PRINT:
+                elif opcode == bytecode.DISPLAY:
                     value = stack.pop()
                     print(value.to_string())
                     stack.append(objects.Null())

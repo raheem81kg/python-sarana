@@ -1,7 +1,7 @@
 
 LOAD_CONST          = 1
 BINARY_NEQ          = 2
-PRINT               = 3
+DISPLAY             = 3
 BINARY_EQ           = 4
 RETURN              = 5
 STORE_VARIABLE      = 6
@@ -35,7 +35,7 @@ NO_ARG              = -255
 reverse = {
      1: "LOAD_CONST",
      2: "BINARY_NEQ",
-     3: "PRINT",
+     3: "DISPLAY",
      4: "BINARY_EQ",
      5: "RETURN",
      6: "STORE_VARIABLE",

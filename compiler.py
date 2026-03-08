@@ -196,10 +196,10 @@ def compile_variable(context, ast):
         raise Exception("Variable %s not yet defined" % ast.getname())
     
 
-def compile_print(context, ast):
-    assert(isinstance(ast,ast_objects.Print))
+def compile_display(context, ast):
+    assert(isinstance(ast,ast_objects.Display))
     compile_any(context,ast.value)
-    context.emit(bytecode.PRINT,bytecode.NO_ARG)
+    context.emit(bytecode.DISPLAY,bytecode.NO_ARG)
 
 
 def compile_if(context, ast):
@@ -423,6 +423,7 @@ def compile_any(context, ast):
         "and":compile_and,
         "not":compile_not,
         #"print":compile_print,
+        "display":compile_display,
         "string":compile_string,
         "integer":compile_integer,
         "float":compile_float,

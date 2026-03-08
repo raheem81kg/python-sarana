@@ -1,8 +1,7 @@
 import os
 import objects
 
-def print_fn(args):
-    
+def display_fn(args):
     print(args[0].to_string())
     return objects.Null()
 
