@@ -395,6 +395,21 @@ class While(BaseBox):
         return 'While(%s) Then(%s)' % (self.condition.rep(), self.body.rep())
 
 
+class TryCatch(BaseBox):
+    def __init__(self, try_body, catch_body):
+        self.try_body = try_body
+        self.catch_body = catch_body
+
+    def eval(self, env):
+        try:
+            return self.try_body.eval(env)
+        except Exception:
+            return self.catch_body.eval(env)
+
+    def rep(self):
+        return 'Try(%s) Catch(%s)' % (self.try_body.rep(), self.catch_body.rep())
+
+
 class BinaryOp(BaseBox):
     def __init__(self, left, right):
         self.left = left

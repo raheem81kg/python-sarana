@@ -10,6 +10,8 @@ LOAD_VARIABLE       = 7
 JUMP                = 8
 JUMP_IF_NOT_ZERO    = 9
 JUMP_IF_ZERO        = 10
+PUSH_TRY            = 24
+POP_TRY             = 25
 
 BINARY_ADD          = 11
 BINARY_SUB          = 12
@@ -41,6 +43,8 @@ reverse = {
      8: "JUMP",
      9: "JUMP_IF_NOT_ZERO",
     10: "JUMP_IF_ZERO",
+    24: "PUSH_TRY",
+    25: "POP_TRY",
     11: "BINARY_ADD",
     12: "BINARY_SUB",
     13: "BINARY_LT",

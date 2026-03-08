@@ -18,7 +18,7 @@ precedence = (
     ("left", "LET"),
     ("left", "ASSIGN"),
     ("left", "LBRACKET", "RBRACKET", "COMMA"),
-    ("left", "IF", "COLON", "ELSE", "END", "NEWLINE", "WHILE"),
+    ("left", "IF", "TRY", "CATCH", "COLON", "ELSE", "END", "NEWLINE", "WHILE"),
     ("left", "AND", "OR"),
     ("left", "NOT"),
     ("left", "EQ", "NE", "GTE", "GT", "LT", "LTE"),
@@ -164,6 +164,18 @@ def p_expression_if(p):
 def p_expression_if_else(p):
     "expression : IF expression COLON NEWLINE block ELSE COLON NEWLINE block END"
     p[0] = If(condition=p[2], body=p[5], else_body=p[9])
+
+def p_expression_trycatch_single_line(p):
+    "expression : TRY COLON statement CATCH COLON statement END"
+    p[0] = TryCatch(p[3], p[6])
+
+def p_expression_trycatch_plain(p):
+    "expression : TRY NEWLINE block CATCH NEWLINE block END"
+    p[0] = TryCatch(p[3], p[6])
+
+def p_expression_trycatch(p):
+    "expression : TRY COLON NEWLINE block CATCH COLON NEWLINE block END"
+    p[0] = TryCatch(p[4], p[8])
 
 def p_expression_while(p):
     "expression : WHILE expression COLON NEWLINE block END"

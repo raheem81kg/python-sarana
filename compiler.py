@@ -265,6 +265,25 @@ def compile_while(context, ast):
     context.instructions[false_jump] = (context.instructions[false_jump][0],after_block)
 
 
+def compile_trycatch(context, ast):
+    assert(isinstance(ast, ast_objects.TryCatch))
+    context.emit(bytecode.PUSH_TRY, 0)
+    handler_jump = len(context.instructions) - 1
+
+    compile_any(context, ast.try_body)
+    context.emit(bytecode.POP_TRY, bytecode.NO_ARG)
+    context.emit(bytecode.JUMP, 0)
+    after_try_jump = len(context.instructions) - 1
+
+    catch_start = len(context.instructions)
+    context.instructions[handler_jump] = (context.instructions[handler_jump][0], catch_start)
+
+    compile_any(context, ast.catch_body)
+
+    after_catch = len(context.instructions)
+    context.instructions[after_try_jump] = (context.instructions[after_try_jump][0], after_catch)
+
+
 def compile_equal(context, ast):
     assert(isinstance(ast,ast_objects.Equal))
     compile_any(context, ast.left)
@@ -416,6 +435,7 @@ def compile_any(context, ast):
         "null":compile_null,
         "variable":compile_variable,
         "if":compile_if,
+        "trycatch":compile_trycatch,
         "while":compile_while,
         "greaterthan":compile_greaterthan,
         "greaterthanequal":compile_greaterthanequal,
