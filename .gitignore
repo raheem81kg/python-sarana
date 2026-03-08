@@ -1,0 +1,4 @@
+*.pyc
+*.pyo
+*.sh
+target-c
