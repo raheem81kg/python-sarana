@@ -1,4 +1,22 @@
+# Python bytecode cache - these are auto-generated and don't belong in git
+__pycache__/
 *.pyc
 *.pyo
-*.sh
+
+# PLY parser auto-generates these tables - we don't need them in git
+parser.out
+parsetab.py
+
+# Generated Sarana output files - these are created at runtime
+output/generated_*.py
+
+# Virtual environment - if you use one locally
+venv/
+.venv/
+
+# Mac system files
+.DS_Store
+
+# Old RPython compile target
 target-c
+*.sh

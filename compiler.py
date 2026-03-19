@@ -1,5 +1,5 @@
 import bytecode, objects, errors
-import ast as ast_objects
+import ast_legacy as ast_objects
 
 class Context(object):
     """Shamelessly plundered from Cycy"""

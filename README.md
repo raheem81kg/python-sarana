@@ -1,120 +1,122 @@
-# python-sarana
+# 🌿 Sarana Programming Language
 
-Repository: `git@github.com:raheem81kg/python-sarana.git`
+**Sarana** is a high-level, general-purpose, imperative programming language with a Caribbean/nature-inspired keyword set. It was designed and built as a university project for CIT4004 (Analysis of Programming Languages) at the University of Technology, Jamaica.
 
-**Learning to build a language interpreter on plain Python with PLY**
+---
 
-The code uses standard Python and PLY for lexing/parsing.
+## Language at a Glance
 
-## Installing
+Sarana uses readable English-like keywords with JavaScript-style braces and semicolons.
 
-`pip install -r requirements.txt`
+| Sarana Keyword | Meaning         | Equivalent in other languages |
+|----------------|-----------------|-------------------------------|
+| `bloom`        | Declare variable | `let`, `var`                 |
+| `echo`         | Print output     | `print()`                    |
+| `when`         | If condition     | `if`                         |
+| `otherwise`    | Else branch      | `else`                       |
+| `cycle`        | While loop       | `while`                      |
+| `craft`        | Define function  | `def`, `func`                |
+| `return`       | Return value     | `return`                     |
+| `try`          | Try block        | `try`                        |
+| `ketch`        | Catch exception  | `catch`, `except`            |
+| `--`           | Comment          | `#`, `//`                    |
 
-## Running
+---
 
-`python sarana.py` for REPL, `python sarana.py [filename].sa` for interpreting a file
+## Sample Program
 
-`:a` gives you the AST of the last statement, `:e` to list environment variables, `:q` or Ctrl-C to quit. The REPL now supports multi-line input too — it'll just keep appending code and trying to interpret it until it's valid (eg. you closed the block or whatever), or you break it ;)
+```sarana
+-- Required assignment sample program
 
-## Status
+bloom A = 20;
+bloom B = 40;
+bloom C = A + B * B;
 
-Basic arithmetic, floats, integers, booleans, and strings, variable assignment, if expressions, and a display() function.
+-- Demonstrating Exception Handling
+try {
+    bloom D = C / 0;
+}
+ketch {
+    echo "Error: Division by zero attempted but not allowed.";
+}
 
-```
->>> 5 == 5
-= true
->>> 5 != 5
-= false
->>> let a = 5
-= 5
->>> display(a)
-5
->>> display(a + 25)
-30
->>> "hi" + 'hi'
-= hihi
->>> "hi" * 5 - 1
-= hihihihih
-
-# if expressions
->>> if false: display("no") else: display("yes") end
-yes
->>> let a = (if true: 1 else: 5 end)
-= 1
-
-let a = 50
-if a == 50 and true:
-  display("doing stuff")
-else:
-  display("not this though")
-end
-
->>> 5 >= 6
-= false
-
-# assignment via if
->>> let a = if true: 5 end
-= 5
->>> :a
-Program(BinaryOp(Variable('a'), If(Boolean(True))Then(Integer(5))Else(None)))
-
-# arrays
->>> [5, 6, ["hi", 7.0]]
-= [5, 6, [hi, 7.0]]
-
-# functions
-func a(b):
- b + 1
-end
-
->>> b(1)
-= 2
-
-# immutability means loops become recursion
-func p_message(msg, n):
-  if n > 0:
-    display(msg)
-    p_message(msg, n - 1)
-  end
-end
-
->>> p_message("hellooo",2)
-hellooo
-hellooo
-
-# functions can be passed around
-func a():
-  1
-end
-
->>> let b = a
->>> b()
-= 1
+echo "The result is " C;
 ```
 
-## Compiling
+**Expected output:**
+```
+Error: Division by zero attempted but not allowed.
+The result is 1620
+```
 
-You will need pypy so you can use RPython's compiler. Then, like so:
+---
 
-`python path/to/rpython/bin/rpython target.py`
+## Project Structure
 
-This will provide a `target-c` binary which you can use as a compiled substitute for `main.py`.
+```
+python-sarana/
+├── src/
+│   ├── lexer.py        # Tokenizer — converts source code to tokens
+│   ├── parser.py       # Parser — builds AST from tokens
+│   ├── ast_nodes.py    # AST node class definitions
+│   ├── semantic.py     # Semantic analyzer — scope, types, error detection
+│   ├── interpreter.py  # AST walker — executes the program
+│   ├── codegen.py      # Code generator — outputs Python source code
+│   ├── errors.py       # Custom error classes
+│   └── sarana.py       # Main entry point — ties all phases together
+│
+├── app/
+│   └── ui.py           # Streamlit web UI
+│
+├── samples/
+│   ├── sample1.sara    # Required assignment sample
+│   ├── sample2.sara    # Scope and binding demo
+│   ├── sample3.sara    # Functions and loops
+│   └── sample4.sara    # Boolean logic
+│
+├── output/             # Generated Python code goes here
+├── requirements.txt
+└── README.md
+```
 
-## Goals
+---
 
-A language which can do things I find interesting, and the tools necessary to execute it.
+## Installation
 
-- [x] Define the language (ongoing)
-- [x] Lexer
-- [x] Parser
-- [x] Bytecode compiler
-- [x] Interpreter/VM
-- [x] Compiles to RPython (mostly but sometimes broken)
-- [ ] JIT
-- [x] Immutability (initial support anyway)
-- [x] First-class functions (sort of)
-- [ ] Structs and traits
-- [ ] FP concepts like map/reduce
-- [ ] Pattern matching
-- [ ] Concurrency via message passing
-- [ ] Standard library
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Running a Sarana File
+
+```bash
+python src/sarana.py samples/sample1.sara
+```
+
+## Launching the Web UI
+
+```bash
+streamlit run app/ui.py
+```
+
+---
+
+## Group Members
+
+- *(Add names and IDs here)*
+
+---
+
+## How the Compiler Works
+
+1. **Lexer** — Reads raw `.sara` source code character by character and produces a list of tokens (like splitting a sentence into individual words)
+2. **Parser** — Takes the token list and checks grammar, building an Abstract Syntax Tree (AST) — a tree structure representing the program's logic
+3. **Semantic Analyzer** — Walks the AST and checks for logical errors (undefined variables, type mismatches, etc.) before the program runs
+4. **Interpreter** — Walks the AST and executes it directly, producing output
+5. **Code Generator** — Walks the AST and emits equivalent Python source code, which can be run independently
+
+---
+
+*Built with Python 3 and PLY (Python Lex-Yacc)*

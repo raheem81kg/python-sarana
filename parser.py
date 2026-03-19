@@ -3,7 +3,7 @@ try:
 except ImportError as exc:
     raise ImportError("PLY is required. Install dependencies from requirements.txt.") from exc
 
-from ast import *
+from ast_legacy import *
 from errors import *
 import lexer
 
