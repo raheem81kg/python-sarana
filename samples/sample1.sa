@@ -1,0 +1,16 @@
+-- Sample 1: Required Assignment Sample
+-- This program demonstrates all key features of Sarana
+
+bloom A = 20;
+bloom B = 40;
+bloom C = A + B * B;
+
+-- Demonstrating Exception Handling
+try {
+    bloom D = C / 0;
+}
+ketch {
+    echo "Error: Division by zero attempted but not allowed.";
+}
+
+echo "The result is " C;

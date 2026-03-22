@@ -6,8 +6,7 @@ import sys
 from contextlib import contextmanager
 from io import StringIO
 
-class Environment(object):
-    
+class Environment(object):  
     def __init__(self):
         self.variables = {}
 

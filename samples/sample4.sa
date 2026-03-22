@@ -1,0 +1,117 @@
+-- Sample 4: Boolean Logic and Control Flow Demonstration
+-- Shows boolean operations, conditional logic, and complex expressions
+
+-- Simple boolean variables
+bloom isRaining = true;
+bloom hasUmbrella = false;
+bloom isCold = true;
+
+-- Boolean AND
+when (isRaining and not hasUmbrella) {
+    echo "You will get wet!";
+} otherwise {
+    echo "You are prepared for the rain.";
+}
+
+-- Boolean OR
+when (isRaining or isCold) {
+    echo "It's not a great day for outdoor activities.";
+}
+
+-- Complex boolean expressions
+bloom temperature = 15;
+bloom humidity = 80;
+
+when ((temperature < 20 and humidity > 70) or isRaining) {
+    echo "The weather is uncomfortable.";
+} otherwise {
+    echo "The weather is nice!";
+}
+
+-- Comparison operators
+bloom a = 10;
+bloom b = 20;
+
+when (a > b) {
+    echo "a is greater than b";
+} otherwise when (a < b) {
+    echo "a is less than b";
+} otherwise {
+    echo "a equals b";
+}
+
+-- Boolean logic in functions
+craft canVote(age, isCitizen) {
+    return age >= 18 and isCitizen;
+}
+
+bloom age1 = 21;
+bloom citizen1 = true;
+when (canVote(age1, citizen1)) {
+    echo "Person 1 can vote";
+}
+
+bloom age2 = 16;
+bloom citizen2 = true;
+when (not canVote(age2, citizen2)) {
+    echo "Person 2 cannot vote";
+}
+
+-- Logical operators with cycles
+bloom count = 0;
+bloom found = false;
+
+cycle (count < 10 and not found) {
+    echo "Searching... count = " count;
+    
+    when (count == 5) {
+        bloom found = true;
+        echo "Found at count 5!";
+    }
+    
+    bloom count = count + 1;
+}
+
+-- Truth table demonstration
+echo "Truth Table for AND:";
+echo "true and true = " (true and true);
+echo "true and false = " (true and false);
+echo "false and true = " (false and true);
+echo "false and false = " (false and false);
+
+echo "Truth Table for OR:";
+echo "true or true = " (true or true);
+echo "true or false = " (true or false);
+echo "false or true = " (false or true);
+echo "false or false = " (false or false);
+
+echo "Truth Table for NOT:";
+echo "not true = " (not true);
+echo "not false = " (not false);
+
+-- Short-circuit evaluation demonstration
+bloom x = 10;
+
+-- This should NOT cause an error because 'x > 5' is true
+-- and OR short-circuits (doesn't evaluate the second part)
+when (x > 5 or x / 0 > 1) {
+    echo "Short-circuit OR works!";
+}
+
+-- Complex nested conditionals
+bloom score = 85;
+bloom hasBonus = true;
+
+when (score >= 90) {
+    echo "Grade: A";
+} otherwise when (score >= 80) {
+    when (hasBonus) {
+        echo "Grade: A (with bonus)";
+    } otherwise {
+        echo "Grade: B";
+    }
+} otherwise when (score >= 70) {
+    echo "Grade: C";
+} otherwise {
+    echo "Grade: F";
+}

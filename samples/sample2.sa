@@ -1,0 +1,47 @@
+-- Sample 2: Scope and Binding Demonstration
+-- Shows lexical scoping, variable shadowing, and nested blocks
+
+-- Global scope
+bloom x = 100;
+bloom greeting = "Hello from Sarana";
+
+echo greeting;
+
+-- Block scope: y is local to this when block
+when (x > 50) {
+    bloom y = x * 2;
+    echo "Inside block, y = " y;
+    echo "Inside block, x = " x;
+}
+
+-- x is still accessible (global scope)
+-- y is NOT accessible here (block scope)
+echo "Outside block, x = " x;
+
+-- Function scope
+craft greet(name) {
+    bloom message = "Welcome, " + name;
+    echo message;
+    return message;
+}
+
+bloom result = greet("Alice");
+
+-- Nested scopes
+bloom outer = 10;
+
+craft testScope() {
+    bloom inner = 20;
+    echo "Inside function: outer = " outer;
+    echo "Inside function: inner = " inner;
+    
+    when (outer > 5) {
+        bloom nested = 30;
+        echo "Inside when block: nested = " nested;
+    }
+    
+    return inner + outer;
+}
+
+bloom total = testScope();
+echo "Final total: " total;

@@ -1,0 +1,85 @@
+-- Sample 3: Functions and Loops Demonstration
+-- Shows function definitions, recursion, and iterative loops
+
+-- Simple arithmetic function
+craft add(a, b) {
+    return a + b;
+}
+
+-- Function that uses another function
+craft multiply(a, b) {
+    bloom result = 0;
+    bloom counter = 0;
+    
+    cycle (counter < b) {
+        bloom result = result + a;
+        bloom counter = counter + 1;
+    }
+    
+    return result;
+}
+
+-- Test arithmetic functions
+bloom sum = add(15, 25);
+echo "15 + 25 = " sum;
+
+bloom product = multiply(6, 7);
+echo "6 * 7 = " product;
+
+-- Countdown function with cycle
+craft countdown(n) {
+    cycle (n > 0) {
+        echo n;
+        bloom n = n - 1;
+    }
+    echo "Liftoff!";
+}
+
+echo "Countdown from 5:";
+countdown(5);
+
+-- Fibonacci-like sequence (iterative)
+craft fibonacci(n) {
+    bloom a = 0;
+    bloom b = 1;
+    bloom count = 0;
+    
+    cycle (count < n) {
+        echo a;
+        bloom temp = a + b;
+        bloom a = b;
+        bloom b = temp;
+        bloom count = count + 1;
+    }
+}
+
+echo "Fibonacci sequence (first 8 numbers):";
+fibonacci(8);
+
+-- Function with conditional logic
+craft max(a, b) {
+    when (a > b) {
+        return a;
+    } otherwise {
+        return b;
+    }
+}
+
+bloom maximum = max(42, 17);
+echo "Max of 42 and 17: " maximum;
+
+-- Factorial (iterative version)
+craft factorial(n) {
+    bloom result = 1;
+    bloom i = 1;
+    
+    cycle (i <= n) {
+        bloom result = result * i;
+        bloom i = i + 1;
+    }
+    
+    return result;
+}
+
+bloom fact5 = factorial(5);
+echo "5! = " fact5;
