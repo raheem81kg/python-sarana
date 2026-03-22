@@ -29,23 +29,23 @@ if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
 
 try:
-    import ply.yacc as ply_yacc
+    import ply.yacc as ply_yacc  # noqa: E402
 except ImportError as exc:
     raise ImportError(
         "PLY is required. Run: pip install -r requirements.txt"
     ) from exc
 
-from lexer import tokenize
-import lexer as _lexer
+from lexer import tokenize  # noqa: E402
+import lexer as _lexer  # noqa: E402
 
 tokens = _lexer.tokens
-from ast_nodes import (
+from ast_nodes import (  # noqa: E402
     Program, BloomStatement, EchoStatement, TryKetchStatement,
     WhenStatement, CycleStatement, CraftStatement, ReturnStatement,
     ExpressionStatement, BinaryOp, UnaryOp, Variable, FunctionCall,
     Integer, Float, String, Boolean, Array,
 )
-from errors import ParseError, UnexpectedEndError
+from errors import ParseError, UnexpectedEndError  # noqa: E402
 
 
 # ===========================================================================
@@ -63,10 +63,10 @@ class _PLYToken:
     """
 
     def __init__(self, tok):
-        self.type    = tok.token_type   # e.g. 'BLOOM', 'INTEGER'
-        self.value   = tok.value        # e.g. 'bloom', 42
-        self.lineno  = tok.line         # line number from our tokenizer
-        self.lexpos  = 0                # character position (not used here)
+        self.type = tok.token_type  # e.g. 'BLOOM', 'INTEGER'
+        self.value = tok.value  # e.g. 'bloom', 42
+        self.lineno = tok.line  # line number from our tokenizer
+        self.lexpos = 0  # character position (not used here)
 
 
 class _TokenStream:

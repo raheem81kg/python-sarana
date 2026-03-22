@@ -1,5 +1,5 @@
 {
-  "extraPaths": ["src", "utils"],
+  "extraPaths": ["src", "utils", "app"],
   "pythonVersion": "3.10",
   "typeCheckingMode": "off",
   "reportDeprecated": "none"

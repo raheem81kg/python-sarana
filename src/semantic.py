@@ -17,10 +17,22 @@
 # Public entry point:
 #   analyze(ast: Program) -> list[SemanticError]
 
-from typing import Any, Callable, Optional, cast
+from typing import Any, Protocol, cast
 
 from ast_nodes import Integer, Program, String
 from errors import SemanticError
+
+
+class _VisitNodeFn(Protocol):
+    """Callable shape for visit_* methods (helps static analysis)."""
+
+    def __call__(self, node: object) -> Any:
+        ...
+
+
+def _run_visit(visitor: _VisitNodeFn, node: object) -> Any:
+    """Call a visit_* handler; separate function so checkers accept the call."""
+    return visitor(node)
 
 
 # ===========================================================================
@@ -78,6 +90,9 @@ class SymbolTable:
 # SemanticAnalyzer — the main checker
 # ===========================================================================
 
+# pylint: disable=invalid-name
+# visit_* method names mirror AST node classes (visitor pattern).
+
 
 class SemanticAnalyzer:
     """
@@ -100,13 +115,10 @@ class SemanticAnalyzer:
 
     def visit(self, node):
         method_name = f"visit_{node.__class__.__name__}"
-        method: Optional[Callable[[Any], Any]] = getattr(
-            self, method_name, None
-        )
+        method = getattr(self, method_name, None)
         if method is None:
             return None
-        fn = cast(Callable[[Any], Any], method)
-        return fn(node)
+        return _run_visit(cast(_VisitNodeFn, method), node)
 
     # ═══════════════════════════════════════════════════════════════════════
     # Program and statements
@@ -355,6 +367,9 @@ class SemanticAnalyzer:
         """Check all elements in the array."""
         for elem in node.elements:
             self.visit(elem)
+
+
+# pylint: enable=invalid-name
 
 
 # ===========================================================================

@@ -25,10 +25,10 @@ _SRC = os.path.dirname(os.path.abspath(__file__))
 if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
 
-from errors import LexError
+from errors import LexError  # noqa: E402
 
 try:
-    import ply.lex as ply_lex
+    import ply.lex as ply_lex  # noqa: E402
 except ImportError as exc:
     raise ImportError(
         "PLY is required. Run: pip install -r requirements.txt"
@@ -191,24 +191,24 @@ def t_GREATER_EQUAL(t):
 # Single-character operators  (string rules — lower priority than functions)
 # ===========================================================================
 
-t_PLUS          = r'\+'    # backslash needed: + is special in regex
-t_MINUS         = r'-'
-t_MULTIPLY      = r'\*'    # backslash needed: * is special in regex
-t_DIVIDE        = r'/'
-t_MODULO        = r'%'
-t_ASSIGN        = r'='
-t_LESS_THAN     = r'<'
-t_GREATER_THAN  = r'>'
+t_PLUS = r'\+'  # backslash needed: + is special in regex
+t_MINUS = r'-'
+t_MULTIPLY = r'\*'  # backslash needed: * is special in regex
+t_DIVIDE = r'/'
+t_MODULO = r'%'
+t_ASSIGN = r'='
+t_LESS_THAN = r'<'
+t_GREATER_THAN = r'>'
 
 # --- Delimiters ---
-t_LPAREN        = r'\('    # backslash needed: ( is special in regex
-t_RPAREN        = r'\)'
-t_LBRACE        = r'\{'
-t_RBRACE        = r'\}'
-t_LBRACKET      = r'\['
-t_RBRACKET      = r'\]'
-t_SEMICOLON     = r';'
-t_COMMA         = r','
+t_LPAREN = r'\('  # backslash needed: ( is special in regex
+t_RPAREN = r'\)'
+t_LBRACE = r'\{'
+t_RBRACE = r'\}'
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]'
+t_SEMICOLON = r';'
+t_COMMA = r','
 
 
 # ===========================================================================

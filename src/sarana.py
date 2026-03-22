@@ -56,18 +56,18 @@ def _load_parser():
 _parser = _load_parser()
 parse = _parser.parse
 
-from colors import Colors
-from errors import (
+from colors import Colors  # noqa: E402
+from errors import (  # noqa: E402
     LexError,
     ParseError,
     SaranaRuntimeError,
     UnexpectedEndError,
     UnexpectedTokenError,
 )
-from lexer import Token, tokenize
-from semantic import analyze
-from interpreter import interpret
-from codegen import generate
+from lexer import Token, tokenize  # noqa: E402
+from semantic import analyze  # noqa: E402
+from interpreter import interpret  # noqa: E402
+from codegen import generate  # noqa: E402
 
 
 class CompilationResult:

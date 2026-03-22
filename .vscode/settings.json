@@ -2,7 +2,7 @@
   "files.associations": {
     "*.sa": "lua"
   },
-  "python.analysis.extraPaths": ["src"],
+  "python.analysis.extraPaths": ["src", "utils", "app"],
   "python.defaultInterpreterPath": ".venv/bin/python3",
   "python.analysis.typeCheckingMode": "off",
   "python.analysis.diagnosticMode": "openFilesOnly",

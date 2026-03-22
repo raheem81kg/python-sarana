@@ -25,7 +25,23 @@ Key Translation Rules:
 The generated Python code is valid Python 3 and can be executed directly.
 """
 
-from typing import Any, Callable, Optional, cast
+from typing import Protocol, cast
+
+
+class _VisitExprFn(Protocol):
+    """Callable shape for visit_expr_* methods (helps static analysis)."""
+
+    def __call__(self, node: object) -> str:
+        ...
+
+
+def _run_expr_visit(visitor: _VisitExprFn, node: object) -> str:
+    """Invoke visit_expr_*; separate function so checkers accept the call."""
+    return visitor(node)
+
+
+# pylint: disable=invalid-name
+# visit_* / visit_expr_* names mirror AST node classes (visitor pattern).
 
 
 class CodeGenerator:
@@ -251,15 +267,12 @@ class CodeGenerator:
         return code strings that can be composed.
         """
         method_name = f"visit_expr_{node.__class__.__name__}"
-        visitor: Optional[Callable[[Any], Any]] = getattr(
-            self, method_name, None
-        )
+        visitor = getattr(self, method_name, None)
         if visitor is None:
             raise NotImplementedError(
                 f"No expression visitor for {node.__class__.__name__}"
             )
-        fn = cast(Callable[[Any], Any], visitor)
-        return fn(node)
+        return _run_expr_visit(cast(_VisitExprFn, visitor), node)
     
     def visit_expr_BinaryOp(self, node):
         """
@@ -342,6 +355,9 @@ class CodeGenerator:
         """
         arg_codes = [self.visit_expression(arg) for arg in node.arguments]
         return f'{node.name}({", ".join(arg_codes)})'
+
+
+# pylint: enable=invalid-name
 
 
 # ═════════════════════════════════════════════════════════════════════════

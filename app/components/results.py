@@ -11,7 +11,7 @@ from datetime import datetime
 
 import streamlit as st
 
-from .styles import (
+from components.styles import (
     TOKEN_STYLE_IDENT,
     TOKEN_STYLE_KEYWORD,
     TOKEN_STYLE_LITERAL,

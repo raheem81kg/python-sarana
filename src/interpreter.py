@@ -17,10 +17,22 @@
 # Public entry point:
 #   interpret(ast: Program) -> InterpreterResult
 
-from typing import Any, Callable, Optional, cast
+from typing import Any, Protocol, cast
 
 from ast_nodes import Program
 from errors import SaranaRuntimeError
+
+
+class _VisitNodeFn(Protocol):
+    """Callable shape for visit_* methods (helps static analysis)."""
+
+    def __call__(self, node: object) -> Any:
+        ...
+
+
+def _run_visit(visitor: _VisitNodeFn, node: object) -> Any:
+    """Call a visit_* handler; separate function so checkers accept the call."""
+    return visitor(node)
 
 
 # ===========================================================================
@@ -111,6 +123,10 @@ class InterpreterResult:
 # Interpreter — the main tree-walking executor
 # ===========================================================================
 
+# pylint: disable=invalid-name
+# visit_* method names mirror AST node classes (visitor pattern).
+
+
 class Interpreter:
     """
     Walks the AST and executes each node, maintaining:
@@ -126,15 +142,12 @@ class Interpreter:
     
     def visit(self, node):
         method_name = f"visit_{node.__class__.__name__}"
-        method: Optional[Callable[[Any], Any]] = getattr(
-            self, method_name, None
-        )
+        method = getattr(self, method_name, None)
         if method is None:
             raise NotImplementedError(
                 f"Interpreter has no visit method for {node.__class__.__name__}"
             )
-        fn = cast(Callable[[Any], Any], method)
-        return fn(node)
+        return _run_visit(cast(_VisitNodeFn, method), node)
     
     # ═══════════════════════════════════════════════════════════════════════
     # Program and statements
@@ -483,6 +496,9 @@ class Interpreter:
         if isinstance(left, (int, float)) and isinstance(right, (int, float)):
             return left >= right
         raise SaranaRuntimeError(f"Cannot compare {type(left).__name__} >= {type(right).__name__}")
+
+
+# pylint: enable=invalid-name
 
 
 # ===========================================================================
