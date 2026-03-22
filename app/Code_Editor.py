@@ -42,6 +42,8 @@ DEFAULT_LLM_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-2024102
 
 ACE_WIDGET_KEY = "sarana_ace_editor"
 EDITOR_VERSION_KEY = "editor_widget_version"
+# Clear runs next run before widgets bind; avoids mutating key "code_editor" after text_area.
+CLEAR_EDITOR_NEXT_KEY = "_sarana_clear_editor_next"
 
 
 # ── Helpers defined first so they can be called below ────────────────────────
@@ -75,19 +77,20 @@ def _render_editor(height_px: int) -> str:
             show_gutter=True,       # line numbers on the left
             auto_update=True,
         )
+        # Ace widget key is not "code_editor"; safe to mirror text for sample/clear logic.
         if edited is not None:
-            st.session_state.code_editor = edited
+            st.session_state["code_editor"] = edited
         return st.session_state.get("code_editor", DEFAULT_CODE)
 
     except ImportError:
-        text = st.text_area(
+        # Do not assign session_state["code_editor"] here: Streamlit owns that key
+        # when key="code_editor" is used — use the widget return value only.
+        return st.text_area(
             "Enter your Sarana code:",
             height=height_px,
             key="code_editor",
             label_visibility="collapsed",
         )
-        st.session_state.code_editor = text
-        return text
 
 
 # ── Page configuration ────────────────────────────────────────────────────────
@@ -106,6 +109,11 @@ render_styles()
 # ── Header ────────────────────────────────────────────────────────────────────
 render_header(PROJECT_ROOT)
 
+# Clear must run before any widget with key "code_editor" is created.
+if st.session_state.pop(CLEAR_EDITOR_NEXT_KEY, False):
+    st.session_state["code_editor"] = ""
+    _bump_editor_version()
+
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 settings = render_sidebar(PROJECT_ROOT, EDITOR_VERSION_KEY)
 
@@ -123,8 +131,7 @@ with col_run:
     run_button = st.button("Run Sarana", type="primary", use_container_width=True)
 with col_clear:
     if st.button("Clear", use_container_width=True):
-        st.session_state.code_editor = ""
-        _bump_editor_version()
+        st.session_state[CLEAR_EDITOR_NEXT_KEY] = True
         st.rerun()
 
 # ── Compilation and results ───────────────────────────────────────────────────
