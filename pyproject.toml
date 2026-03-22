@@ -1,0 +1,12 @@
+# Ruff / tooling (Cursor often uses Ruff for "line too long" warnings).
+[tool.ruff.lint]
+# Ignore line length (same idea as # noqa: E501 on every long line).
+ignore = ["E501"]
+
+[tool.ruff]
+line-length = 88
+
+# Pylance / basedpyright: resolve `sarana` for app/ui.py (import path set at runtime).
+[tool.pyright]
+extraPaths = ["src"]
+pythonVersion = "3.10"

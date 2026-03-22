@@ -1,12 +1,9 @@
-# src/errors.py
 # Custom error classes for the Sarana language compiler.
-#
 # Design principle:
 #   - LexError, ParseError, SaranaRuntimeError are RAISED immediately —
 #     they stop execution at the point the problem is found.
 #   - SemanticError is COLLECTED into a list by the semantic analyzer —
 #     this way the user sees ALL semantic problems at once, not just the first.
-#
 # Every error carries a line number so the user knows exactly where to look.
 
 
@@ -48,7 +45,6 @@ class LexError(SaranaError):
 class ParseError(SaranaError):
     """
     Raised by the parser when the token stream does not match the grammar rules.
-
     Examples:
         bloom = 5;            ← missing variable name after 'bloom'
         when x > 5 echo x;   ← missing parentheses around condition
