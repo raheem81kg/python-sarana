@@ -35,9 +35,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 _SRC = Path(__file__).resolve().parent
-_src_str = str(_SRC)
-if _src_str not in sys.path:
-    sys.path.insert(0, _src_str)
+_UTILS = _SRC.parent / "utils"
+
+for _p in (str(_SRC), str(_UTILS)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 
 def _load_parser():
