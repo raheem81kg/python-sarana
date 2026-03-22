@@ -1,7 +1,0 @@
-let a = readline("What is your name? ")
-if a == "":
-  display("Boo that's no help")
-else:
-  display(a + ", that's a nice name :)")
-
-end

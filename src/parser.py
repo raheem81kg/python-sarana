@@ -21,10 +21,12 @@
 # Public entry point:
 #   parse(source_code: str) -> Program
 
-import sys
 import os
+import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+_SRC = os.path.dirname(os.path.abspath(__file__))
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
 
 try:
     import ply.yacc as ply_yacc
@@ -33,7 +35,10 @@ except ImportError as exc:
         "PLY is required. Run: pip install -r requirements.txt"
     ) from exc
 
-from lexer import tokens, tokenize   # 'tokens' MUST be in this module's namespace for PLY
+from lexer import tokenize
+import lexer as _lexer
+
+tokens = _lexer.tokens
 from ast_nodes import (
     Program, BloomStatement, EchoStatement, TryKetchStatement,
     WhenStatement, CycleStatement, CraftStatement, ReturnStatement,
@@ -102,14 +107,21 @@ class _TokenStream:
 # 'nonassoc' = cannot be chained: a < b < c is a syntax error
 
 precedence = (
-    ('left',    'OR'),
-    ('left',    'AND'),
-    ('right',   'NOT'),
-    ('nonassoc','DOUBLE_EQUALS', 'NOT_EQUALS',
-                'LESS_THAN', 'GREATER_THAN', 'LESS_EQUAL', 'GREATER_EQUAL'),
-    ('left',    'PLUS', 'MINUS'),
-    ('left',    'MULTIPLY', 'DIVIDE', 'MODULO'),
-    ('right',   'UMINUS'),   # virtual token for unary minus — highest precedence
+    ('left', 'OR'),
+    ('left', 'AND'),
+    ('right', 'NOT'),
+    (
+        'nonassoc',
+        'DOUBLE_EQUALS',
+        'NOT_EQUALS',
+        'LESS_THAN',
+        'GREATER_THAN',
+        'LESS_EQUAL',
+        'GREATER_EQUAL',
+    ),
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'MULTIPLY', 'DIVIDE', 'MODULO'),
+    ('right', 'UMINUS'),
 )
 
 # PLY requires the start symbol to be declared.
@@ -167,16 +179,36 @@ def p_statement_try_ketch(p):
     p[0] = TryKetchStatement(try_body=p[2], ketch_body=p[4], line=p.lineno(1))
 
 def p_statement_when(p):
-    'statement : WHEN LPAREN expression RPAREN block'
+    'statement : WHEN LPAREN expression RPAREN block when_else_tail'
     # when (x > 5) { ... }
-    p[0] = WhenStatement(condition=p[3], then_body=p[5], line=p.lineno(1))
+    # optional: otherwise { ... }  and/or  otherwise when (..) { } chains
+    p[0] = WhenStatement(
+        condition=p[3],
+        then_body=p[5],
+        otherwise_body=p[6],
+        line=p.lineno(1),
+    )
 
-def p_statement_when_otherwise(p):
-    'statement : WHEN LPAREN expression RPAREN block OTHERWISE block'
-    # when (x > 5) { ... } otherwise { ... }
-    # PLY resolves the "dangling else" by defaulting to SHIFT on OTHERWISE,
-    # which correctly attaches 'otherwise' to the nearest 'when'.
-    p[0] = WhenStatement(condition=p[3], then_body=p[5], otherwise_body=p[7], line=p.lineno(1))
+
+def p_when_else_tail_empty(p):
+    'when_else_tail :'
+    p[0] = []
+
+
+def p_when_else_tail_else_block(p):
+    'when_else_tail : OTHERWISE block'
+    p[0] = p[2]
+
+
+def p_when_else_tail_else_if_chain(p):
+    'when_else_tail : OTHERWISE WHEN LPAREN expression RPAREN block when_else_tail'
+    inner = WhenStatement(
+        condition=p[4],
+        then_body=p[6],
+        otherwise_body=p[7],
+        line=p.lineno(2),
+    )
+    p[0] = [inner]
 
 def p_statement_cycle(p):
     'statement : CYCLE LPAREN expression RPAREN block'

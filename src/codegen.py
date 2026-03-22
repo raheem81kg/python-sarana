@@ -25,7 +25,7 @@ Key Translation Rules:
 The generated Python code is valid Python 3 and can be executed directly.
 """
 
-from ast_nodes import *
+from typing import Any, Callable, Optional, cast
 
 
 class CodeGenerator:
@@ -250,13 +250,16 @@ class CodeGenerator:
         Unlike statement visitors which emit code, expression visitors
         return code strings that can be composed.
         """
-        method_name = f'visit_expr_{node.__class__.__name__}'
-        visitor = getattr(self, method_name, None)
-        
-        if visitor:
-            return visitor(node)
-        else:
-            raise NotImplementedError(f'No expression visitor for {node.__class__.__name__}')
+        method_name = f"visit_expr_{node.__class__.__name__}"
+        visitor: Optional[Callable[[Any], Any]] = getattr(
+            self, method_name, None
+        )
+        if visitor is None:
+            raise NotImplementedError(
+                f"No expression visitor for {node.__class__.__name__}"
+            )
+        fn = cast(Callable[[Any], Any], visitor)
+        return fn(node)
     
     def visit_expr_BinaryOp(self, node):
         """
@@ -339,16 +342,6 @@ class CodeGenerator:
         """
         arg_codes = [self.visit_expression(arg) for arg in node.arguments]
         return f'{node.name}({", ".join(arg_codes)})'
-    
-    def visit_expr_Assignment(self, node):
-        """
-        Generate code for assignment (used in some expression contexts).
-        x = 5  →  x = 5
-        
-        Note: This is for assignments within expressions, not bloom statements.
-        """
-        value_code = self.visit_expression(node.value)
-        return f'{node.name} = {value_code}'
 
 
 # ═════════════════════════════════════════════════════════════════════════

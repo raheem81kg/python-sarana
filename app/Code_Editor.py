@@ -1,13 +1,13 @@
 """
-ui.py
-=====
-Streamlit Web UI for Sarana Programming Language
+Code_Editor.py
+==============
+Main Streamlit page for the Sarana Programming Language compiler.
 
 This provides a professional web interface for the Sarana compiler
 with color-coded messages and comprehensive compiler phase visualization.
 
 Run with:
-    streamlit run app/ui.py
+    streamlit run app/Code_Editor.py
 """
 
 import sys
@@ -74,11 +74,11 @@ def _bump_editor_widget():
     )
 
 
-def _anthropic_first_text_block(message) -> str:
-    """First user-visible string from Anthropic `message.content` (typed as a union)."""
-    if not getattr(message, "content", None):
+def _anthropic_first_text_block(api_response) -> str:
+    """First user-visible string from Anthropic response.content (union type)."""
+    if not getattr(api_response, "content", None):
         return ""
-    block = message.content[0]
+    block = api_response.content[0]
     chunk = getattr(block, "text", None)
     if isinstance(chunk, str):
         return chunk
@@ -467,28 +467,32 @@ with st.sidebar:
     with st.expander("Keywords"):
         st.markdown("""
 **Variables & Output:**
-- `bloom` - Declare variable
-- `echo` - Print output
+- `bloom` — Declare variable
+- `echo` — Print output
 
 **Control Flow:**
-- `when` / `otherwise` - If/else
-- `cycle` - While loop
+- `when` / `otherwise` — If / else
+- `otherwise when` — Else-if chain
+- `cycle` — While loop
 
 **Functions:**
-- `craft` - Define function
-- `return` - Return value
+- `craft` — Define function
+- `return` — Return value
 
 **Error Handling:**
-- `try` / `ketch` - Exception handling
+- `try` / `ketch` — Exception handling
 
 **Boolean:**
-- `true` / `false` - Booleans
-- `and` / `or` / `not` - Logic operators
+- `true` / `false` — Booleans
+- `and` / `or` / `not` — Logic (short-circuit)
+
+**Comments:**
+- `--` — Single-line comment
         """)
 
     with st.expander("Operators"):
         st.markdown("""
-**Arithmetic:**
+**Arithmetic (PEMDAS):**
 `+` `-` `*` `/` `%`
 
 **Comparison:**
@@ -497,9 +501,28 @@ with st.sidebar:
 **Assignment:**
 `=`
 
-**Comments:**
-`--` (single line)
+**Delimiters:**
+`{ }` blocks — `( )` expressions — `;` statements
         """)
+
+    with st.expander("Quick Examples"):
+        st.code(
+            "-- Variables\nbloom x = 42;\nbloom name = \"Sarana\";\n\n"
+            "-- Output\necho x;\necho \"Hello \" name;\n\n"
+            "-- Conditional\nwhen (x > 10) {\n    echo \"big\";\n}"
+            " otherwise {\n    echo \"small\";\n}\n\n"
+            "-- Loop\nbloom i = 0;\ncycle (i < 3) {\n    echo i;"
+            "\n    bloom i = i + 1;\n}\n\n"
+            "-- Function\ncraft add(a, b) {\n    return a + b;\n}\n"
+            "echo add(3, 4);",
+            language="javascript",
+        )
+
+    st.page_link(
+        "pages/Language_Docs.py",
+        label="Full Language Reference",
+        icon=":material/menu_book:",
+    )
 
 # Main editor
 st.markdown("### Code Editor")
@@ -903,9 +926,6 @@ st.markdown("---")
 st.markdown(
     '<div style="text-align: center; color: #64748b; padding: 2rem 0;">'
     "<strong>Sarana Programming Language</strong><br>"
-    "CIT4004 Analysis of Programming Languages | "
-    "University of Technology, Jamaica<br>"
-    "<em>A Caribbean-inspired language with bloom, echo, craft, and more</em>"
     "</div>",
     unsafe_allow_html=True,
 )

@@ -1,4 +1,6 @@
 {
   "extraPaths": ["src"],
-  "pythonVersion": "3.10"
+  "pythonVersion": "3.10",
+  "typeCheckingMode": "off",
+  "reportDeprecated": "none"
 }

@@ -17,12 +17,9 @@
 # Public entry point:
 #   interpret(ast: Program) -> InterpreterResult
 
-import sys
-import os
+from typing import Any, Callable, Optional, cast
 
-sys.path.insert(0, os.path.dirname(__file__))
-
-from ast_nodes import *
+from ast_nodes import Program
 from errors import SaranaRuntimeError
 
 
@@ -128,17 +125,16 @@ class Interpreter:
         self.try_stack = []            # for try/ketch exception handling
     
     def visit(self, node):
-        """
-        Dispatch to the correct visit_* method based on node type.
-        This is the Visitor pattern — one method per AST node class.
-        """
-        method_name = f'visit_{node.__class__.__name__}'
-        method = getattr(self, method_name, None)
+        method_name = f"visit_{node.__class__.__name__}"
+        method: Optional[Callable[[Any], Any]] = getattr(
+            self, method_name, None
+        )
         if method is None:
             raise NotImplementedError(
                 f"Interpreter has no visit method for {node.__class__.__name__}"
             )
-        return method(node)
+        fn = cast(Callable[[Any], Any], method)
+        return fn(node)
     
     # ═══════════════════════════════════════════════════════════════════════
     # Program and statements
@@ -253,15 +249,29 @@ class Interpreter:
         """
         Arithmetic:  A + B * B
         Comparison:  x == y
-        Logical:     a and b
-        
+        Logical:     a and b  (short-circuit; right side may be skipped)
+
         PEMDAS is already enforced by the AST shape.
         """
+        op = node.operator
+
+        # Short-circuit boolean ops — do not evaluate skipped side (e.g. x/0).
+        if op == 'and':
+            left = self.visit(node.left)
+            if not self._is_truthy(left):
+                return False
+            right = self.visit(node.right)
+            return self._is_truthy(right)
+        if op == 'or':
+            left = self.visit(node.left)
+            if self._is_truthy(left):
+                return True
+            right = self.visit(node.right)
+            return self._is_truthy(right)
+
         left = self.visit(node.left)
         right = self.visit(node.right)
-        
-        op = node.operator
-        
+
         # Arithmetic
         if op == '+':
             return self._add(left, right)
@@ -287,13 +297,7 @@ class Interpreter:
             return self._less_equal(left, right)
         elif op == '>=':
             return self._greater_equal(left, right)
-        
-        # Logical
-        elif op == 'and':
-            return self._is_truthy(left) and self._is_truthy(right)
-        elif op == 'or':
-            return self._is_truthy(left) or self._is_truthy(right)
-        
+ 
         else:
             raise SaranaRuntimeError(
                 f"Unknown binary operator '{op}'",

@@ -1,0 +1,23 @@
+# Flake8 — used by the Python extension / CLI when flake8 is enabled.
+# Matches the noisy rules we ignore in pyproject.toml (Ruff) where possible.
+[flake8]
+max-line-length = 120
+extend-ignore =
+    E501,
+    E302,
+    E303,
+    E305,
+    E306,
+    W291,
+    W293,
+    W391,
+    E203,
+    E731,
+    E741,
+exclude =
+    .venv,
+    __pycache__,
+    output,
+    .git,
+    old_files,
+    assets/old_files

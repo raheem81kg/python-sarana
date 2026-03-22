@@ -1,12 +1,28 @@
-# Ruff / tooling (Cursor often uses Ruff for "line too long" warnings).
+# Ruff + Pyright. See docs/CONFIG_AND_LINTING.md.
 [tool.ruff.lint]
-# Ignore line length (same idea as # noqa: E501 on every long line).
-ignore = ["E501"]
+ignore = [
+    "E501",  # line too long
+    "E302",  # expected 2 blank lines (flake8)
+    "E303",  # too many blank lines
+    "E305",  # blank lines after function
+    "E306",  # blank lines before nested def
+    "W291",  # trailing whitespace
+    "W293",  # blank line contains whitespace
+    "W391",  # blank line at end of file
+    "E203",  # whitespace before ':'
+    "E731",  # lambda assignment
+    "E741",  # ambiguous variable name
+]
 
 [tool.ruff]
-line-length = 88
+line-length = 120
 
-# Pylance / basedpyright: resolve `sarana` for app/ui.py (import path set at runtime).
+[tool.ruff.lint.per-file-ignores]
+"src/sarana.py" = ["E402"]
+"src/parser.py" = ["E402"]
+"src/lexer.py" = ["E402"]
+
 [tool.pyright]
 extraPaths = ["src"]
 pythonVersion = "3.10"
+typeCheckingMode = "off"

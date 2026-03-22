@@ -9,6 +9,7 @@ parsetab.py
 
 # Generated Sarana output files - these are created at runtime
 output/generated_*.py
+samples/*.py
 
 # Virtual environment - if you use one locally
 venv/

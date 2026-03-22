@@ -14,9 +14,18 @@
 #
 # Public entry point:
 #   tokenize(source_code: str) -> list[Token]
+#
+# pylint: disable=invalid-name
+# (PLY requires token rules named t_<TOKEN>, e.g. t_PLUS — not bare UPPER_CASE.)
 
-import sys
 import os
+import sys
+
+_SRC = os.path.dirname(os.path.abspath(__file__))
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
+
+from errors import LexError
 
 try:
     import ply.lex as ply_lex
@@ -25,12 +34,7 @@ except ImportError as exc:
         "PLY is required. Run: pip install -r requirements.txt"
     ) from exc
 
-# Make src/ importable when this file is run directly
-sys.path.insert(0, os.path.dirname(__file__))
-from errors import LexError
 
-
-# ===========================================================================
 # Token  — the unit of output from the lexer
 # ===========================================================================
 

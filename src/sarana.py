@@ -28,24 +28,44 @@ Architecture:
     └─→ [Code Generator] → Python source code
 """
 
+import importlib.util
 import sys
-import os
-from typing import Dict, List, Any, Optional
 import traceback
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-# Import color support
+_SRC = Path(__file__).resolve().parent
+_src_str = str(_SRC)
+if _src_str not in sys.path:
+    sys.path.insert(0, _src_str)
+
+
+def _load_parser():
+    name = "_sarana_parser"
+    spec = importlib.util.spec_from_file_location(name, _SRC / "parser.py")
+    mod = importlib.util.module_from_spec(spec)
+    if spec.loader is None:
+        raise ImportError("Cannot load parser.py")
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_parser = _load_parser()
+parse = _parser.parse
+
 from colors import Colors
-
-# Import all compiler phases
 from errors import (
-    SaranaError, LexError, ParseError, SemanticError, 
-    SaranaRuntimeError, UnexpectedEndError, UnexpectedTokenError
+    LexError,
+    ParseError,
+    SaranaRuntimeError,
+    UnexpectedEndError,
+    UnexpectedTokenError,
 )
-from lexer import tokenize, Token
-from parser import parse, get_ast_string
+from lexer import Token, tokenize
 from semantic import analyze
-from interpreter import interpret, InterpreterResult
-from codegen import generate, generate_to_file
+from interpreter import interpret
+from codegen import generate
 
 
 class CompilationResult:
@@ -289,7 +309,7 @@ def compile_file(
     
     # Read source file
     try:
-        with open(input_file, 'r') as f:
+        with open(input_file, "r", encoding="utf-8") as f:
             source_code = f.read()
     except FileNotFoundError:
         result = CompilationResult()

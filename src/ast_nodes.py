@@ -22,7 +22,7 @@
 #     rather than separate Add/Sub/Mul classes — simpler and cleaner
 
 
-# ===========================================================================
+
 # Base class
 # ===========================================================================
 
@@ -52,7 +52,7 @@ class Node:
         return "  " * indent
 
 
-# ===========================================================================
+
 # Program — the root node
 # ===========================================================================
 
@@ -79,7 +79,7 @@ class Program(Node):
         return f"Program({len(self.statements)} statements)"
 
 
-# ===========================================================================
+
 # Statements
 # ===========================================================================
 
@@ -342,7 +342,7 @@ class ExpressionStatement(Node):
         return f"ExpressionStatement({self.expression!r})"
 
 
-# ===========================================================================
+
 # Expressions — things that produce a value
 # ===========================================================================
 
@@ -466,7 +466,7 @@ class FunctionCall(Node):
         return f"FunctionCall(name={self.name!r}, args={len(self.arguments)})"
 
 
-# ===========================================================================
+
 # Literals — leaf nodes that hold actual values
 # ===========================================================================
 # Literals are 'leaf' nodes — they have no children.  They just hold a value.

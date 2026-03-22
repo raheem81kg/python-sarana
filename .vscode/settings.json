@@ -1,0 +1,18 @@
+{
+  "files.associations": {
+    "*.sa": "lua"
+  },
+  "python.analysis.extraPaths": ["src"],
+  "python.defaultInterpreterPath": ".venv/bin/python3",
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "editor.rulers": [],
+  "editor.formatOnSave": false,
+  "ruff.enable": true,
+  "ruff.configurationPreference": "filesystemFirst",
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+    "--config=${workspaceFolder}/.flake8"
+  ],
+  "python.linting.pylintEnabled": false
+}
