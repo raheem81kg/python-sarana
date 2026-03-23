@@ -38,7 +38,7 @@ from components.results import (
 # ── Constants ────────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-DEFAULT_LLM_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+DEFAULT_LLM_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 ACE_WIDGET_KEY = "sarana_ace_editor"
 EDITOR_VERSION_KEY = "editor_widget_version"
@@ -159,7 +159,12 @@ if run_button and code.strip():
     with t5:
         tab_codegen(result, settings["generate_code"])
     with t6:
-        tab_llm(result, code, settings["enable_llm"], DEFAULT_LLM_MODEL)
+        tab_llm(
+            result,
+            code,
+            settings["enable_llm"],
+            settings.get("gemini_model", DEFAULT_LLM_MODEL),
+        )
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")

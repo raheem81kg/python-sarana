@@ -92,14 +92,28 @@ def render_sidebar(project_root: Path, editor_version_key: str) -> dict:
 
         # ── LLM integration ───────────────────────────────────────────
         st.markdown("### LLM Integration")
-        settings["enable_llm"] = st.checkbox("Enable Claude Comparison", value=False)
+        settings["enable_llm"] = st.checkbox("Enable Gemini Comparison", value=False)
 
         if settings["enable_llm"]:
             st.text_input(
-                "Anthropic API Key",
+                "Gemini API Key",
                 type="password",
-                key="anthropic_api_key",
-                help="Or set ANTHROPIC_API_KEY in your environment.",
+                key="gemini_api_key",
+                help="Or set GEMINI_API_KEY in your environment.",
+            )
+            
+            GEMINI_MODELS = {
+                "gemini-2.5-flash": "Gemini 2.5 Flash (Price-performance, reasoning)",
+                "gemini-2.5-flash-lite": "Gemini 2.5 Flash-Lite (Fastest, budget-friendly)",
+                "gemini-2.5-flash-live": "Gemini 2.5 Flash Live Preview (Real-time agents)",
+                "gemini-2.5-flash-tts": "Gemini 2.5 Flash TTS Preview (Text-to-speech)",
+            }
+            settings["gemini_model"] = st.selectbox(
+                "Model",
+                options=list(GEMINI_MODELS.keys()),
+                format_func=lambda x: GEMINI_MODELS[x],
+                index=0,
+                help="Select the Gemini model for comparison",
             )
 
         st.markdown("---")

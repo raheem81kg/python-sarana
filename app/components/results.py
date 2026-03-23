@@ -217,37 +217,38 @@ def tab_codegen(result, generate_code: bool) -> None:
 
 
 def tab_llm(result, code: str, enable_llm: bool, default_model: str) -> None:
-    """Tab 6 — Claude LLM comparison."""
-    import anthropic  # local import keeps top-level Code_Editor clean
+    """Tab 6 — Gemini LLM comparison."""
+    import google.generativeai as genai  # local import keeps top-level Code_Editor clean
 
-    _section("LLM Comparison - Claude vs Sarana Compiler")
+    _section("LLM Comparison - Gemini vs Sarana Compiler")
     st.markdown(
         "**Compiler (Deterministic) vs LLM (Probabilistic)** — "
         "The compiler follows exact grammar rules.  "
-        "Claude interprets code probabilistically."
+        "Gemini interprets code probabilistically."
     )
 
     api_key = (
-        st.session_state.get("anthropic_api_key") or ""
-    ).strip() or os.environ.get("ANTHROPIC_API_KEY", "").strip()
+        st.session_state.get("gemini_api_key") or ""
+    ).strip() or os.environ.get("GEMINI_API_KEY", "").strip()
 
     if not enable_llm or not api_key:
         _banner(
             "info-msg",
-            "Enable <strong>Claude Comparison</strong> in the sidebar "
-            "and enter your API key, or set <code>ANTHROPIC_API_KEY</code> "
+            "Enable <strong>Gemini Comparison</strong> in the sidebar "
+            "and enter your API key, or set <code>GEMINI_API_KEY</code> "
             "before starting Streamlit.",
         )
         return
 
-    st.caption(f"Model: `{default_model}` (set ANTHROPIC_MODEL to change)")
+    st.caption(f"Model: `{default_model}` (set GEMINI_MODEL to change)")
 
-    if not st.button("Run Claude Comparison"):
+    if not st.button("Run Gemini Comparison"):
         return
 
     try:
-        with st.spinner("Asking Claude..."):
-            client = anthropic.Anthropic(api_key=api_key)
+        with st.spinner("Asking Gemini..."):
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel(default_model)
             prompt = (
                 "You are executing a program written in Sarana.\n\n"
                 "Keyword Mappings:\n"
@@ -263,12 +264,8 @@ def tab_llm(result, code: str, enable_llm: bool, default_model: str) -> None:
                 "- and/or/not = logical operators\n\n"
                 f"Execute this program and show ONLY the output:\n\n{code}\n\nOutput:"
             )
-            response = client.messages.create(
-                model=default_model,
-                max_tokens=1024,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            llm_text = _first_text_block(response)
+            response = model.generate_content(prompt)
+            llm_text = response.text
 
         col1, col2 = st.columns(2)
         with col1:
@@ -278,19 +275,17 @@ def tab_llm(result, code: str, enable_llm: bool, default_model: str) -> None:
                 st.code(line, language=None)
             st.caption("Always exact — follows grammar rules precisely")
         with col2:
-            st.markdown("**Claude (Probabilistic)**")
+            st.markdown("**Gemini (Probabilistic)**")
             _banner("info-msg", "")
             st.code(llm_text, language=None)
             st.caption("Best guess — interprets code probabilistically")
 
     except Exception as exc:  # pylint: disable=broad-except
-        _banner("error-msg", f"Error calling Claude API: {str(exc).replace('<', '&lt;')}")
+        _banner("error-msg", f"Error calling Gemini API: {str(exc).replace('<', '&lt;')}")
 
 
 def _first_text_block(response) -> str:
-    """Extract the first plain-text string from an Anthropic API response."""
-    if not getattr(response, "content", None):
-        return ""
-    block = response.content[0]
-    text = getattr(block, "text", None)
-    return text if isinstance(text, str) else str(block)
+    """Extract text from a Gemini API response."""
+    if hasattr(response, "text"):
+        return response.text
+    return str(response)
