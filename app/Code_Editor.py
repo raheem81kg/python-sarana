@@ -106,6 +106,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── Initialize session state for persistence across pages ─────────────────────
+# Ensure API key persists when navigating between pages
+if "gemini_api_key" not in st.session_state:
+    st.session_state["gemini_api_key"] = os.environ.get("GEMINI_API_KEY", "")
+
 # ── CSS ───────────────────────────────────────────────────────────────────────
 render_styles()
 

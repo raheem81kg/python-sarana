@@ -8,8 +8,8 @@ sidebar navigation automatically. Navigate back to the main playground via
 the sidebar link.
 """
 
-# import sys
 import base64
+import os
 from pathlib import Path
 
 import streamlit as st
@@ -24,6 +24,11 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# ── Initialize session state for persistence across pages ─────────────────────
+# Ensure API key persists when navigating between pages
+if "gemini_api_key" not in st.session_state:
+    st.session_state["gemini_api_key"] = os.environ.get("GEMINI_API_KEY", "")
 
 # Shared CSS (keep in sync with ui.py)
 st.markdown(
