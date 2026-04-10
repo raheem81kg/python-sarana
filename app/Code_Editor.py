@@ -38,12 +38,15 @@ from components.results import (
 # ── Constants ────────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-DEFAULT_LLM_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+DEFAULT_LLM_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 ACE_WIDGET_KEY = "sarana_ace_editor"
 EDITOR_VERSION_KEY = "editor_widget_version"
 # Clear runs next run before widgets bind; avoids mutating key "code_editor" after text_area.
 CLEAR_EDITOR_NEXT_KEY = "_sarana_clear_editor_next"
+# Store compilation result to persist across reruns (e.g., when using AI features)
+COMPILATION_RESULT_KEY = "_sarana_compilation_result"
+COMPILATION_CODE_KEY = "_sarana_compilation_code"
 
 
 # ── Helpers defined first so they can be called below ────────────────────────
@@ -103,6 +106,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── Initialize session state for persistence across pages ─────────────────────
+# Ensure API key persists when navigating between pages
+if "gemini_api_key" not in st.session_state:
+    st.session_state["gemini_api_key"] = os.environ.get("GEMINI_API_KEY", "")
+
 # ── CSS ───────────────────────────────────────────────────────────────────────
 render_styles()
 
@@ -132,34 +140,58 @@ with col_run:
 with col_clear:
     if st.button("Clear", use_container_width=True):
         st.session_state[CLEAR_EDITOR_NEXT_KEY] = True
+        # Clear compilation results too
+        st.session_state.pop(COMPILATION_RESULT_KEY, None)
+        st.session_state.pop(COMPILATION_CODE_KEY, None)
         st.rerun()
 
 # ── Compilation and results ───────────────────────────────────────────────────
-if run_button and code.strip():
-    with st.spinner("Compiling..."):
-        result = compile_and_run(
-            code,
-            generate_target_code=settings["generate_code"],
-            run_interpreter=settings["run_interpreter"],
+# Compile when Run button is clicked, or use stored result on reruns
+result = None
+try:
+    if run_button and code.strip():
+        with st.spinner("Compiling..."):
+            result = compile_and_run(
+                code,
+                generate_target_code=settings["generate_code"],
+                run_interpreter=settings["run_interpreter"],
+            )
+        # Store result in session state for persistence across reruns
+        st.session_state[COMPILATION_RESULT_KEY] = result
+        st.session_state[COMPILATION_CODE_KEY] = code
+        result = st.session_state[COMPILATION_RESULT_KEY]
+    elif COMPILATION_RESULT_KEY in st.session_state:
+        # Use stored result on reruns (e.g., when AI buttons are clicked)
+        result = st.session_state[COMPILATION_RESULT_KEY]
+
+    # Display results if we have them
+    if result:
+        render_status_banner(result)
+
+        t1, t2, t3, t4, t5, t6 = st.tabs(
+            ["Output", "Tokens", "AST", "Semantic Analysis", "Generated Code", "AI Assistant"]
         )
-
-    render_status_banner(result)
-
-    t1, t2, t3, t4, t5, t6 = st.tabs(
-        ["Output", "Tokens", "AST", "Semantic Analysis", "Generated Code", "LLM Comparison"]
-    )
-    with t1:
-        tab_output(result, settings["run_interpreter"])
-    with t2:
-        tab_tokens(result)
-    with t3:
-        tab_ast(result)
-    with t4:
-        tab_semantic(result)
-    with t5:
-        tab_codegen(result, settings["generate_code"])
-    with t6:
-        tab_llm(result, code, settings["enable_llm"], DEFAULT_LLM_MODEL)
+        with t1:
+            tab_output(result, settings["run_interpreter"])
+        with t2:
+            tab_tokens(result)
+        with t3:
+            tab_ast(result)
+        with t4:
+            tab_semantic(result)
+        with t5:
+            tab_codegen(result, settings["generate_code"])
+        with t6:
+            tab_llm(
+                result,
+                code,
+                settings["enable_llm"],
+                settings.get("gemini_model", DEFAULT_LLM_MODEL),
+            )
+except Exception as e:
+    st.error(f"Error displaying results: {e}")
+    import traceback
+    st.code(traceback.format_exc())
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
