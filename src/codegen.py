@@ -1,6 +1,4 @@
 """
-codegen.py
-==========
 Target Code Generator for Sarana
 
 This module translates a Sarana Abstract Syntax Tree (AST) into executable

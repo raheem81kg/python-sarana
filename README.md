@@ -1,6 +1,12 @@
 # Sarana Programming Language
-
 **Sarana** is a high-level, general-purpose, imperative programming language with a Caribbean/nature-inspired keyword set. 
+
+## Group Members
+
+Serena Morris - 2208659 
+Raheem Gordon - 2208501 
+Chadrick Atkinson - 2204885
+Akeem Creary - 2110275
 
 | Property      | Value                                 |
 |---------------|---------------------------------------|
@@ -13,40 +19,6 @@
 | Course        | CIT4004 — Analysis of Programming Languages |
 | Institution   | University of Technology, Jamaica     |
 | Semester      | Semester 2, 2025/2026                 |
-
----
-
-## Project Requirements Checklist
-
-This project satisfies every requirement from the grading scheme:
-
-### Application (50 marks)
-
-| Requirement | Status | How it is met |
-|---|---|---|
-| Lexical analysis and tokenization | **Done** | `src/lexer.py` using PLY — converts `.sa` source to typed tokens |
-| Syntax analysis / AST generation | **Done** | `src/parser.py` using PLY YACC — builds a full AST |
-| Semantic analysis | **Done** | `src/semantic.py` — undefined vars/functions, div-by-zero, scope |
-| Target code runs and produces results | **Done** | `src/codegen.py` generates executable Python; `src/interpreter.py` runs it directly |
-| LLM integration | **Done** | `app/Code_Editor.py` — Claude (Anthropic) comparison tab |
-| User interface | **Done** | Streamlit web UI with 6 tabs, sidebar, sample programs |
-| Error handling | **Done** | 5 error types, line numbers, color-coded messages |
-| GitHub deployment | **Done** | Hosted on GitHub (`serii` branch) |
-
-### Project Report (54 marks)
-
-| Requirement | Status | Where covered |
-|---|---|---|
-| Language paradigm | **Done** | Imperative/Procedural — see `LANGUAGE_DOCS.md` §Characteristics |
-| General vs domain-specific | **Done** | General-purpose — `LANGUAGE_DOCS.md` + this README |
-| Low vs high level | **Done** | High-level — `LANGUAGE_DOCS.md` + this README |
-| Correct grammar (CFG/BNF/EBNF) | **Done** | `LANGUAGE_DOCS.md` §13 Grammar Summary (EBNF) |
-| Complete Parse Tree / AST | **Done** | `PARSE_TREE_DIAGRAMS.txt`; visible in UI "AST" tab |
-| Full token list | **Done** | `LANGUAGE_DOCS.md` §14 Token Reference |
-| Regular expressions for tokens | **Done** | `src/lexer.py` (PLY regex rules); `LANGUAGE_DOCS.md` §14 |
-| Scope and binding demonstration | **Done** | `samples/sample2.sa`; UI "Semantic" tab |
-| Implementation language details | **Done** | Python 3 + PLY — see this README §How the Compiler Works |
-| Nine characteristics | **Done** | `LANGUAGE_DOCS.md` §16 Nine Characteristics |
 
 ---
 
@@ -135,11 +107,8 @@ python-sarana/
 │   └── test_all_samples.py      # End-to-end sample program tests
 │
 ├── docs/
-│   ├── CONFIG_AND_LINTING.md  # Ruff, Pyright, IDE
-│   └── DEVELOPER_NOTES.md     # Tests, layout, entry points
-├── LANGUAGE_DOCS.md    # Complete language reference
-├── PROJECT_REPORT.md   # Project report (all grading requirements)
-├── PARSE_TREE_DIAGRAMS.txt
+│   ├── UserManual.docx  
+│   └── ProjectReport.Docx
 ├── requirements.txt
 ├── pyproject.toml      # Ruff / Pyright config
 ├── .flake8             # Flake8 (optional; VS Code can use this)
@@ -364,14 +333,4 @@ if x > 3:
 else:
     print("small")
 ```
-
----
-
-## Group Members
-
-Serena Morris - 2208659 
-Raheem Gordon - 2208501 
-Chadrick Atkinson - 2204885
-Akeem Creary - 2110275
-
 ---
