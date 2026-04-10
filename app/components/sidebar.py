@@ -171,10 +171,10 @@ def render_sidebar(project_root: Path, editor_version_key: str) -> dict:
                 language="javascript",
             )
 
-        st.page_link(
-            "pages/Language_Docs.py",
-            label="Full Language Reference",
-            icon=":material/menu_book:",
-        )
+    st.page_link(
+        "pages/Language_Docs.py",
+        label="Full Language Reference",
+        icon=":material/menu_book:",
+    )
 
     return settings
