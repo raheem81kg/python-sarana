@@ -2,6 +2,16 @@
 
 **Sarana** is a high-level, general-purpose, imperative programming language with a Caribbean/nature-inspired keyword set. 
 
+hosted link: https://python-sarana.streamlit.app
+## Group Members
+
+Serena Morris - 2208659 
+Raheem Gordon - 2208501 
+Chadrick Atkinson - 2204885
+Akeem Creary - 2110275
+
+--- 
+
 | Property      | Value                                 |
 |---------------|---------------------------------------|
 | Paradigm      | Imperative / Procedural               |
@@ -13,40 +23,6 @@
 | Course        | CIT4004 — Analysis of Programming Languages |
 | Institution   | University of Technology, Jamaica     |
 | Semester      | Semester 2, 2025/2026                 |
-
----
-
-## Project Requirements Checklist
-
-This project satisfies every requirement from the grading scheme:
-
-### Application (50 marks)
-
-| Requirement | Status | How it is met |
-|---|---|---|
-| Lexical analysis and tokenization | **Done** | `src/lexer.py` using PLY — converts `.sa` source to typed tokens |
-| Syntax analysis / AST generation | **Done** | `src/parser.py` using PLY YACC — builds a full AST |
-| Semantic analysis | **Done** | `src/semantic.py` — undefined vars/functions, div-by-zero, scope |
-| Target code runs and produces results | **Done** | `src/codegen.py` generates executable Python; `src/interpreter.py` runs it directly |
-| LLM integration | **Done** | `app/Code_Editor.py` — Claude (Anthropic) comparison tab |
-| User interface | **Done** | Streamlit web UI with 6 tabs, sidebar, sample programs |
-| Error handling | **Done** | 5 error types, line numbers, color-coded messages |
-| GitHub deployment | **Done** | Hosted on GitHub (`serii` branch) |
-
-### Project Report (54 marks)
-
-| Requirement | Status | Where covered |
-|---|---|---|
-| Language paradigm | **Done** | Imperative/Procedural — see `LANGUAGE_DOCS.md` §Characteristics |
-| General vs domain-specific | **Done** | General-purpose — `LANGUAGE_DOCS.md` + this README |
-| Low vs high level | **Done** | High-level — `LANGUAGE_DOCS.md` + this README |
-| Correct grammar (CFG/BNF/EBNF) | **Done** | `LANGUAGE_DOCS.md` §13 Grammar Summary (EBNF) |
-| Complete Parse Tree / AST | **Done** | `PARSE_TREE_DIAGRAMS.txt`; visible in UI "AST" tab |
-| Full token list | **Done** | `LANGUAGE_DOCS.md` §14 Token Reference |
-| Regular expressions for tokens | **Done** | `src/lexer.py` (PLY regex rules); `LANGUAGE_DOCS.md` §14 |
-| Scope and binding demonstration | **Done** | `samples/sample2.sa`; UI "Semantic" tab |
-| Implementation language details | **Done** | Python 3 + PLY — see this README §How the Compiler Works |
-| Nine characteristics | **Done** | `LANGUAGE_DOCS.md` §16 Nine Characteristics |
 
 ---
 
@@ -69,7 +45,7 @@ This project satisfies every requirement from the grading scheme:
 
 ## Required Assignment Sample
 
-The following program satisfies the minimum required sample from the project spec:
+The following program satisfies the minimum required sample :
 
 ```sarana
 -- Required assignment sample program
@@ -109,11 +85,16 @@ python-sarana/
 │   ├── interpreter.py  # Phase 4 — Tree-walking interpreter
 │   ├── codegen.py      # Phase 5 — Python code generator
 │   ├── errors.py       # Custom error classes
-│   ├── colors.py       # ANSI terminal color codes
 │   └── sarana.py       # Main entry point / unified API
 │
+├── utils/
+│   └── colors.py       # ANSI terminal color codes (CLI)
+│
 ├── app/
-│   └── ui.py           # Streamlit web UI (6 tabs + LLM)
+│   ├── Code_Editor.py  # Streamlit entry — editor + results
+│   ├── pages/
+│   │   └── Language_Docs.py
+│   └── components/     # sidebar, header, styles, results, AI assistant
 │
 ├── assets/
 │   ├── NoBackgroundLogo.PNG
@@ -134,12 +115,6 @@ python-sarana/
 │   ├── test_phase5_codegen.py   # Phase 5 — Code generator tests
 │   └── test_all_samples.py      # End-to-end sample program tests
 │
-├── docs/
-│   ├── CONFIG_AND_LINTING.md  # Ruff, Pyright, IDE
-│   └── DEVELOPER_NOTES.md     # Tests, layout, entry points
-├── LANGUAGE_DOCS.md    # Complete language reference
-├── PROJECT_REPORT.md   # Project report (all grading requirements)
-├── PARSE_TREE_DIAGRAMS.txt
 ├── requirements.txt
 ├── pyproject.toml      # Ruff / Pyright config
 ├── .flake8             # Flake8 (optional; VS Code can use this)
@@ -181,12 +156,13 @@ Open your browser to `http://localhost:8501`
 
 **UI Features:**
 - Code editor with line numbers
-- 6 tabs: Output, Tokens, AST, Semantic Analysis, Generated Code, LLM Comparison
+- 6 tabs: Output, Tokens, AST, Semantic Analysis, Generated Code, AI Assistant (Gemini)
 - Sample program library (dropdown in sidebar)
-- Language reference in sidebar
+- Language reference in sidebar (`Language Docs` page)
 - Download generated Python code
 - Color-coded error / success / warning messages
-- LLM comparison (requires Anthropic API key)
+- Theme-aware styling (follows Streamlit light / dark mode)
+- AI Assistant tab (optional): Google Gemini via `google-generativeai` and `GEMINI_API_KEY`
 
 ### Method 2: Command Line
 
@@ -242,8 +218,6 @@ PYTHONPATH=src python3 -m pytest tests/test_phase5_codegen.py -v
 PYTHONPATH=src python3 -m pytest tests/test_all_samples.py -v
 ```
 
-All 117 tests pass.
-
 ---
 
 ## How the Compiler Works
@@ -269,20 +243,27 @@ Source (.sa file)
 [5. Code Gen]     src/codegen.py    — translates AST to executable Python source
 ```
 
-### LLM Integration
+### AI Assistant (Gemini)
 
-The web UI includes a **Claude (Anthropic)** comparison tab:
+The web UI includes an **AI Assistant** tab powered by **Google Gemini** (`google-generativeai`):
 
-1. The same Sarana source is compiled by the interpreter (deterministic result).
-2. The source is also sent to the Claude API with a prompt asking it to execute the code.
-3. Both outputs are displayed side-by-side so you can compare formal compilation vs. probabilistic LLM execution.
+1. Sarana source is still compiled and run by the interpreter (deterministic pipeline).
+2. Optionally, you can ask Gemini for explanations, fixes, or help; it uses the same source and compiler context in the prompt.
 
-To use: set your `ANTHROPIC_API_KEY` environment variable (or paste it in the sidebar), then tick "Enable Claude Comparison" and run.
+Install the SDK (included in `requirements.txt` when you `pip install -r requirements.txt`):
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
+pip install google-generativeai
+```
+
+Set your API key (or paste it in the sidebar when prompted):
+
+```bash
+export GEMINI_API_KEY="your-key"
 streamlit run app/Code_Editor.py
 ```
+
+Default model is `gemini-2.5-flash`. Override with the `GEMINI_MODEL` environment variable or the model dropdown in the sidebar.
 
 ---
 
@@ -364,14 +345,3 @@ if x > 3:
 else:
     print("small")
 ```
-
----
-
-## Group Members
-
-Serena Morris - 2208659 
-Raheem Gordon - 2208501 
-Chadrick Atkinson - 2204885
-Akeem Creary - 2110275
-
----

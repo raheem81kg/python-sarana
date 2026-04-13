@@ -218,12 +218,12 @@ def tab_codegen(result, generate_code: bool) -> None:
 
 def tab_llm(result, code: str, enable_llm: bool, default_model: str) -> None:
     """Tab 6 — Enhanced Gemini AI Assistant with multiple analysis modes."""
-    from components.ai_assistant import create_ai_assistant, AIAnalysisResult
+    from components.ai_assistant import create_ai_assistant
 
     _section("AI Assistant - Powered by Gemini")
-    
+
     st.markdown(
-        "### 🤖 Sarana AI Assistant\n"
+        "### Sarana AI Assistant\n"
         "Get AI-powered insights about your code including execution comparison, "
         "explanations, error analysis, and optimization suggestions."
     )
@@ -241,8 +241,15 @@ def tab_llm(result, code: str, enable_llm: bool, default_model: str) -> None:
         )
         return
 
-    # Create AI assistant instance
-    assistant = create_ai_assistant(api_key=api_key, model_name=default_model)
+    try:
+        assistant = create_ai_assistant(api_key=api_key, model_name=default_model)
+    except ImportError as exc:
+        _banner(
+            "error-msg",
+            f"{exc}<br>"
+            "From the project root run: <code>pip install google-generativeai</code>",
+        )
+        return
     
     st.caption(f"Model: `{default_model}` (set GEMINI_MODEL to change)")
     
@@ -257,11 +264,11 @@ def tab_llm(result, code: str, enable_llm: bool, default_model: str) -> None:
             "generate_example"
         ],
         format_func=lambda x: {
-            "execution_comparison": "⚖️ Execution Comparison (Compiler vs AI)",
-            "code_explanation": "📖 Code Explanation",
-            "error_analysis": "🔍 Error Analysis & Fixes",
-            "optimization": "⚡ Optimization Suggestions",
-            "generate_example": "✨ Generate Example Code"
+            "execution_comparison": "Execution Comparison (Compiler vs AI)",
+            "code_explanation": "Code Explanation",
+            "error_analysis": "Error Analysis & Fixes",
+            "optimization": "Optimization Suggestions",
+            "generate_example": "Generate Example Code",
         }.get(x, x),
         horizontal=True,
         key="ai_mode_radio"
@@ -283,13 +290,13 @@ def tab_llm(result, code: str, enable_llm: bool, default_model: str) -> None:
 def _render_execution_comparison(assistant, result, code: str) -> None:
     """Render the execution comparison UI."""
     st.markdown("---")
-    st.markdown("#### ⚖️ Execution Comparison")
+    st.markdown("#### Execution Comparison")
     st.markdown(
         "Compare the deterministic compiler output with Gemini's probabilistic interpretation. "
         "This demonstrates the difference between formal compilation and AI reasoning."
     )
 
-    if not st.button("🚀 Run Comparison", use_container_width=True, key="run_comparison"):
+    if not st.button("Run Comparison", use_container_width=True, key="run_comparison"):
         return
 
     try:
@@ -308,23 +315,21 @@ def _render_execution_comparison(assistant, result, code: str) -> None:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("**🎯 Sarana Compiler (Deterministic)**")
-            _banner("success-msg", "")
+            st.markdown("**Sarana Compiler (Deterministic)**")
             if result.output:
                 for line in result.output:
                     st.code(line, language=None)
             else:
                 st.caption("(no output)")
-            st.caption("✓ Follows exact grammar rules")
+            st.caption("Follows exact grammar rules.")
             
             if result.generated_code:
                 with st.expander("Generated Python Code"):
                     st.code(result.generated_code, language="python")
 
         with col2:
-            st.markdown("**🤖 Gemini AI (Probabilistic)**")
-            _banner("info-msg", "")
-            
+            st.markdown("**Gemini AI (Probabilistic)**")
+
             # Parse AI response to extract output and reasoning sections
             import re
             
@@ -365,11 +370,11 @@ def _render_execution_comparison(assistant, result, code: str) -> None:
                         st.code(line, language=None)
             else:
                 st.caption("(no output)")
-            st.caption("✓ Interpreted by AI model")
+            st.caption("Interpreted by the AI model.")
             
             # Display reasoning in expander
             if reasoning_section_match:
-                with st.expander("💭 AI Reasoning / Notes"):
+                with st.expander("AI reasoning / notes"):
                     st.markdown(reasoning_section_match.group(1).strip())
 
         # Analysis summary - compare outputs directly in UI
@@ -388,11 +393,11 @@ def _render_execution_comparison(assistant, result, code: str) -> None:
         is_match = compiler_lines == ai_lines
         
         if is_match:
-            st.success("✅ MATCH: AI execution matches compiler output exactly!")
+            st.success("MATCH: AI execution matches compiler output exactly.")
         else:
-            st.warning("⚠️ DIFFER: AI interpretation differs from compiler")
-            
-            with st.expander("🔍 Difference Details", expanded=True):
+            st.warning("DIFFER: AI interpretation differs from compiler.")
+
+            with st.expander("Difference details", expanded=True):
                 col_diff1, col_diff2 = st.columns(2)
                 with col_diff1:
                     st.markdown("**Compiler lines:**")
@@ -403,12 +408,12 @@ def _render_execution_comparison(assistant, result, code: str) -> None:
                     for i, line in enumerate(ai_lines[:len(compiler_lines)+5], 1):
                         st.text(f"{i}. {line}")
         
-        with st.expander("📊 Analysis Details"):
+        with st.expander("Analysis details"):
             if ai_result.tokens_used:
                 st.caption(f"Tokens used: {ai_result.tokens_used:,}")
             st.markdown(f"- Compiler output lines: {len(compiler_lines)}")
             st.markdown(f"- AI output lines: {len(ai_lines)}")
-            st.markdown(f"- Match: {'✅ Yes' if is_match else '❌ No'}")
+            st.markdown(f"- Match: {'Yes' if is_match else 'No'}")
 
     except Exception as exc:
         _banner("error-msg", f"Error: {str(exc).replace('<', '&lt;')}")
@@ -417,10 +422,10 @@ def _render_execution_comparison(assistant, result, code: str) -> None:
 def _render_code_explanation(assistant, code: str) -> None:
     """Render the code explanation UI."""
     st.markdown("---")
-    st.markdown("#### 📖 Code Explanation")
+    st.markdown("#### Code Explanation")
     st.markdown("Get a detailed breakdown of what your code does and how it works.")
 
-    if not st.button("🔍 Explain Code", use_container_width=True, key="explain_code"):
+    if not st.button("Explain Code", use_container_width=True, key="explain_code"):
         return
 
     try:
@@ -431,9 +436,8 @@ def _render_code_explanation(assistant, code: str) -> None:
             _banner("error-msg", f"Analysis Failed: {ai_result.error_message}")
             return
 
-        _banner("info-msg", "")
         st.markdown(ai_result.content)
-        
+
         if ai_result.tokens_used:
             st.caption(f"Tokens used: {ai_result.tokens_used:,}")
 
@@ -444,13 +448,13 @@ def _render_code_explanation(assistant, code: str) -> None:
 def _render_error_analysis(assistant, result, code: str) -> None:
     """Render the error analysis UI."""
     st.markdown("---")
-    st.markdown("#### 🔍 Error Analysis & Fixes")
+    st.markdown("#### Error Analysis & Fixes")
     
     # Collect all errors
     all_errors = result.get_all_errors()
     
     if not all_errors:
-        st.success("✅ No errors detected! Your code compiled successfully.")
+        st.success("No errors detected. Your code compiled successfully.")
         st.markdown(
             "Your code has no errors. You can still run error analysis "
             "on the semantic warnings if any exist."
@@ -471,7 +475,7 @@ def _render_error_analysis(assistant, result, code: str) -> None:
         for i, err in enumerate(errors_to_analyze, 1):
             st.error(f"{i}. {err}")
 
-    if not st.button("🔧 Analyze & Fix", use_container_width=True, key="analyze_errors"):
+    if not st.button("Analyze & Fix", use_container_width=True, key="analyze_errors"):
         return
 
     try:
@@ -486,9 +490,8 @@ def _render_error_analysis(assistant, result, code: str) -> None:
             _banner("error-msg", f"Analysis Failed: {ai_result.error_message}")
             return
 
-        _banner("info-msg", "")
         st.markdown(ai_result.content)
-        
+
         if ai_result.tokens_used:
             st.caption(f"Tokens used: {ai_result.tokens_used:,}")
 
@@ -499,10 +502,10 @@ def _render_error_analysis(assistant, result, code: str) -> None:
 def _render_optimization(assistant, code: str) -> None:
     """Render the optimization suggestions UI."""
     st.markdown("---")
-    st.markdown("#### ⚡ Optimization Suggestions")
+    st.markdown("#### Optimization Suggestions")
     st.markdown("Get AI-powered recommendations to improve your code.")
 
-    if not st.button("⚡ Get Suggestions", use_container_width=True, key="get_optimizations"):
+    if not st.button("Get Suggestions", use_container_width=True, key="get_optimizations"):
         return
 
     try:
@@ -513,9 +516,8 @@ def _render_optimization(assistant, code: str) -> None:
             _banner("error-msg", f"Analysis Failed: {ai_result.error_message}")
             return
 
-        _banner("info-msg", "")
         st.markdown(ai_result.content)
-        
+
         if ai_result.tokens_used:
             st.caption(f"Tokens used: {ai_result.tokens_used:,}")
 
@@ -526,7 +528,7 @@ def _render_optimization(assistant, code: str) -> None:
 def _render_example_generator(assistant) -> None:
     """Render the example generator UI."""
     st.markdown("---")
-    st.markdown("#### ✨ Generate Example Code")
+    st.markdown("#### Generate Example Code")
     st.markdown("Generate Sarana code examples for learning and reference.")
 
     col1, col2 = st.columns(2)
@@ -558,7 +560,7 @@ def _render_example_generator(assistant) -> None:
             key="example_difficulty"
         )
 
-    if not st.button("✨ Generate Example", use_container_width=True, key="generate_example"):
+    if not st.button("Generate Example", use_container_width=True, key="generate_example"):
         return
 
     try:
@@ -572,15 +574,14 @@ def _render_example_generator(assistant) -> None:
             _banner("error-msg", f"Generation Failed: {ai_result.error_message}")
             return
 
-        _banner("info-msg", "")
         st.markdown(ai_result.content)
-        
+
         if ai_result.tokens_used:
             st.caption(f"Tokens used: {ai_result.tokens_used:,}")
-        
+
         # Add to editor button
         st.markdown("---")
-        if st.button("📋 Copy to Editor", key="copy_example"):
+        if st.button("Copy to Editor", key="copy_example"):
             # Extract code from markdown code blocks
             import re
             code_match = re.search(r'```sarana\n(.*?)\n```', ai_result.content, re.DOTALL)

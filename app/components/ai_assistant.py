@@ -12,10 +12,27 @@ Provides comprehensive language context to Gemini and handles various AI tasks:
 
 import os
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any
+from typing import Any, List, Optional
 
-import google.generativeai as genai
 import streamlit as st
+
+_genai = None
+
+
+def _get_genai():
+    """Lazy import so Streamlit runs without google-generativeai until AI is used."""
+    global _genai
+    if _genai is None:
+        try:
+            import google.generativeai as genai_mod
+
+            _genai = genai_mod
+        except ImportError as exc:
+            raise ImportError(
+                "Missing package google-generativeai. "
+                "Install with: pip install google-generativeai"
+            ) from exc
+    return _genai
 
 
 # =============================================================================
@@ -357,8 +374,9 @@ class SaranaAIAssistant:
         self._model: Optional[Any] = None
         
         if self.api_key:
-            genai.configure(api_key=self.api_key)
-            self._model = genai.GenerativeModel(model_name)
+            genai_mod = _get_genai()
+            genai_mod.configure(api_key=self.api_key)
+            self._model = genai_mod.GenerativeModel(model_name)
 
     def is_configured(self) -> bool:
         """Check if the assistant has a valid API key."""
@@ -391,9 +409,10 @@ class SaranaAIAssistant:
         full_prompt = f"{SARANA_LANGUAGE_CONTEXT}\n\n{'='*60}\nUSER REQUEST\n{'='*60}\n\n{user_prompt}"
         
         try:
+            genai_mod = _get_genai()
             response = self._model.generate_content(
                 full_prompt,
-                generation_config=genai.types.GenerationConfig(
+                generation_config=genai_mod.types.GenerationConfig(
                     temperature=temperature,
                     max_output_tokens=max_tokens,
                 )
@@ -578,22 +597,28 @@ Optimization Suggestions:"""
             AIAnalysisResult with comparison analysis
         """
         compiler_out = "\n".join(compiler_output) if compiler_output else "(no output)"
-        
+
         gen_code_section = ""
         if compiler_generated_code:
             gen_code_section = f"""
 
-Generated Python Code:
+Actual compiler-generated Python (reference):
 ```python
 {compiler_generated_code}
 ```"""
-        
+
         prompt = f"""Execute this Sarana program and produce the output with your reasoning.
 
 Sarana Code:
 ```
 {code}
 ```
+
+Actual interpreter output (reference — your echo lines should match when semantics agree):
+```
+{compiler_out}
+```
+{gen_code_section}
 
 YOUR TASK:
 1. Simulate the program execution mentally following Sarana semantics

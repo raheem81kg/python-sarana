@@ -45,33 +45,35 @@ def render_styles() -> None:
         box-shadow: 0 6px 20px rgba(0,0,0,.06);
     }
     .success-msg {
-        background: linear-gradient(145deg,#ecfdf5,#d1fae5,#bbf7d0);
+        background: #d1fae5;
         border: 1px solid rgba(22,163,74,.35);
         color: #14532d;
     }
     .error-msg {
-        background: linear-gradient(145deg,#fef2f2,#fee2e2,#fecaca);
+        background: #fee2e2;
         border: 1px solid rgba(220,38,38,.35);
         color: #7f1d1d;
     }
     .warning-msg {
-        background: linear-gradient(145deg,#fffbeb,#fef3c7,#fde68a);
+        background: #fef3c7;
         border: 1px solid rgba(245,158,11,.4);
         color: #78350f;
     }
     .info-msg {
-        background: linear-gradient(145deg,#eff6ff,#dbeafe,#bfdbfe);
+        background: #dbeafe;
         border: 1px solid rgba(59,130,246,.35);
         color: #1e3a8a;
     }
 
-    /* ── Code editor chrome ─────────────────────────────────────── */
+    /* ── Code editor chrome (follows Streamlit theme) ─────────────── */
     .editor-hint {
         display: inline-block;
         padding: .45rem .9rem;
-        font-size: .85rem; color: #cbd5e1;
-        background: rgba(30,41,59,.85);
-        border: 1px solid #334155; border-radius: 999px;
+        font-size: .85rem;
+        color: var(--text-color, #334155);
+        background: var(--secondary-background-color, #f1f5f9);
+        border: 1px solid rgba(128,128,128,.25);
+        border-radius: 999px;
         margin: .35rem 0 .75rem;
     }
     iframe[title="streamlit_ace.streamlit_ace"] { border-radius: 14px !important; }
@@ -80,20 +82,30 @@ def render_styles() -> None:
         border: 1px solid #334155; border-radius: 14px; overflow: hidden;
     }
 
-    /* ── Tabs ───────────────────────────────────────────────────── */
+    /* ── Tabs (use Streamlit theme vars so light/dark mode both work) ─ */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px; background-color: #1e293b;
-        padding: 8px; border-radius: 8px;
+        gap: 8px;
+        background-color: var(--secondary-background-color, #f1f5f9);
+        padding: 8px;
+        border-radius: 8px;
     }
     .stTabs [data-baseweb="tab"] {
-        padding: 12px 24px; background-color: #334155;
-        border-radius: 6px; font-weight: 500;
-        border: 1px solid #475569; color: #e2e8f0;
+        padding: 12px 24px;
+        /* Slightly different from tab-list for contrast in both themes */
+        background-color: var(--background-color, #ffffff);
+        border-radius: 6px;
+        font-weight: 500;
+        border: 1px solid rgba(128, 128, 128, 0.22);
+        color: var(--text-color, #1e293b);
     }
-    .stTabs [data-baseweb="tab"]:hover { background-color: #475569; }
+    .stTabs [data-baseweb="tab"]:hover {
+        opacity: 0.92;
+        filter: brightness(0.98);
+    }
     .stTabs [aria-selected="true"] {
-        background-color: #3b82f6 !important;
-        color: white !important; border-color: #3b82f6 !important;
+        background-color: var(--primary-color, #3b82f6) !important;
+        color: var(--text-on-primary, #ffffff) !important;
+        border-color: var(--primary-color, #3b82f6) !important;
     }
 
     /* ── Misc ───────────────────────────────────────────────────── */
